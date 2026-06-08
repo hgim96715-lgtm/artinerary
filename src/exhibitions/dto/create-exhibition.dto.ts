@@ -8,8 +8,10 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Validate,
 } from 'class-validator';
 import { ExhibitionFeeType } from 'generated/prisma/client';
+import { ExhibitionDateRangeConstraint } from './exhibition-date-range.validator';
 
 export class CreateExhibitionDto {
   @IsString()
@@ -20,6 +22,7 @@ export class CreateExhibitionDto {
   startDate: Date;
 
   @Type(() => Date)
+  @Validate(ExhibitionDateRangeConstraint)
   @IsDate()
   endDate: Date;
 

@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { ExhibitionFeeType, ExhibitionSource } from 'generated/prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateExhibitionDto } from './dto/create-exhibition.dto';
@@ -51,6 +56,13 @@ export class ExhibitionsService {
     });
     if (!exhibition) {
       throw new NotFoundException(`수정하고 싶은 ${id}는 없는 Id입니다.`);
+    }
+    const startDate = dto.startDate ?? exhibition.startDate;
+    const endDate = dto.endDate ?? exhibition.endDate;
+    if (endDate < startDate) {
+      throw new BadRequestException(
+        '종료일은 시작일보다 이후여야 합니다. 다시 확인해주세요.',
+      );
     }
     await this.prisma.exhibition.update({
       where: { id },
