@@ -12,6 +12,11 @@ export type Exhibition = {
   sourceUrl: string | null;
   startDate: string;
   endDate: string;
+  venueName: string | null;
+  area: string | null;
+  address: string | null;
+  latitude: string | null;
+  longitude: string | null;
   priceText: string | null;
   discountText: string | null;
   feeType: ExhibitionFeeType;
