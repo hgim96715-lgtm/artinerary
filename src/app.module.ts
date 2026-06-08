@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { envValidationSchema } from './config/env.validation';
+import { ExhibitionsModule } from './exhibitions/exhibitions.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { envValidationSchema } from './config/env.validation';
       validationOptions: { convert: true },
     }),
     PrismaModule,
+    ExhibitionsModule,
   ],
   controllers: [],
   providers: [],
