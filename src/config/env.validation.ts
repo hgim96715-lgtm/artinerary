@@ -12,4 +12,9 @@ export const envValidationSchema = Joi.object({
   [EnvKeys.API_FORMAT]: Joi.string(),
   [EnvKeys.API_EXHIBITION_BASE_URL]: Joi.string().uri(),
   [EnvKeys.API_EXHIBITION_KEY]: Joi.string(),
+  [EnvKeys.ADMIN_EMAIL]: Joi.string().email().required(),
+  [EnvKeys.ADMIN_PASSWORD]: Joi.string().required(),
+  [EnvKeys.JWT_SECRET]: Joi.string().required(),
+  [EnvKeys.JWT_EXPIRES_IN]: Joi.string().required(),
+  [EnvKeys.COOKIE_NAME]: Joi.string().default('artinerary-auth-token'),
 });
