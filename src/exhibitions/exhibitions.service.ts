@@ -13,15 +13,29 @@ import { UpdateExhibitionDto } from './dto/update-exhibition.dto';
 export class ExhibitionsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll() {
+  async findAll(area?: string) {
     return this.prisma.exhibition.findMany({
       where: {
         isVisible: true,
+        ...(area ? { area } : {}),
       },
       orderBy: {
         startDate: 'asc',
       },
     });
+  }
+
+  async findAreaStats() {
+    const rows = await this.prisma.exhibition.groupBy({
+      by: ['area'],
+      where: { isVisible: true, area: { not: null } },
+      _count: { _all: true },
+      orderBy: { area: 'asc' },
+    });
+    return rows.map((row) => ({
+      area: row.area as string,
+      count: row._count._all,
+    }));
   }
   async findOne(id: number) {
     const exhibition = await this.prisma.exhibition.findFirst({
