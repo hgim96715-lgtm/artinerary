@@ -24,12 +24,18 @@ async function fetchAPI<T>(
   }
   return res.json();
 }
+export type ExhibitionAreaStat = { area: string; count: number };
 
-export function getExhibitions(): Promise<Exhibition[]> {
-  return fetchAPI<Exhibition[]>('/exhibitions');
+export function getExhibitions(area?: string): Promise<Exhibition[]> {
+  const qs = area ? `?area=${encodeURIComponent(area)}` : '';
+  return fetchAPI<Exhibition[]>(`/exhibitions${qs}`);
 }
 
 export async function getExhibition(id: string | number): Promise<Exhibition> {
   const json = await fetchAPI<ExhibitionDetailResponse>(`/exhibitions/${id}`);
   return json?.data;
+}
+
+export function getExhibitionAreas(): Promise<ExhibitionAreaStat[]> {
+  return fetchAPI<ExhibitionAreaStat[]>('/exhibitions/areas');
 }
