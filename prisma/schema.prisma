@@ -1,55 +1,63 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma" 
-  moduleFormat= "cjs"
+    provider     = "prisma-client"
+    output       = "../generated/prisma"
+    moduleFormat = "cjs"
 }
 
 datasource db {
-  provider = "postgresql"
+    provider = "postgresql"
 }
-
 
 // Exhibitions
 
-enum Role{
+enum Role {
     ADMIN
     USER
 }
 
-enum ExhibitionSource{
+enum ExhibitionSource {
     MANUAL
     API
 }
 
-enum ExhibitionFeeType{
+enum ExhibitionFeeType {
     FREE
     PAID
     UNKNOWN
 }
 
-model Exhibition{
-    id Int @id @default(autoincrement())
-    source ExhibitionSource @default(MANUAL)
-    externalId String?
-    apiProvider String?
-    title String 
-    description String?
-    imageUrl String?
-    sourceUrl String?
-    startDate DateTime
-    endDate DateTime
-    priceText String?
+model Exhibition {
+    id           Int               @id @default(autoincrement())
+    source       ExhibitionSource  @default(MANUAL)
+    externalId   String?
+    apiProvider  String?
+    title        String
+    description  String?
+    imageUrl     String?
+    sourceUrl    String?
+    startDate    DateTime
+    endDate      DateTime
+    priceText    String?
     discountText String?
-    feeType ExhibitionFeeType @default(UNKNOWN)
+    feeType      ExhibitionFeeType @default(UNKNOWN)
 
     venueName String?
-    area String?
-    address String?
-    latitude Float?
+    area      String?
+    address   String?
+    latitude  Float?
     longitude Float?
-    isVisible Boolean @default(true)
+    isVisible Boolean  @default(true)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    
+
     @@unique([apiProvider, externalId])
+}
+
+model User {
+    id           Int      @id @default(autoincrement())
+    email        String   @unique
+    passwordHash String
+    role         Role     @default(USER)
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
 }
