@@ -1,3 +1,4 @@
+import { ExhibitionLocation } from "@/components/ExhibitionLocatiion";
 import { getExhibition } from "@/lib/api";
 import { formatDescriptionForDisplay } from "@/lib/description";
 import { formatDateRange, getExhibitionStatus } from "@/lib/format";
@@ -25,21 +26,7 @@ export default async function ExhibitionsDetailPage({params}:Props) {
     <span className={`inline-block text-xs px-2 py-0.5 rounded-full ${status.color} text-${status.color}-500`}>{status.label}</span>
     <h1 className="text-2xl font-bold">{exhibition.title}</h1>
     <p className="text-gray-600">{formatDateRange(exhibition.startDate,exhibition.endDate)}</p>
-    <dl className="space-y-2 text-sm">
-        {exhibition.venueName && (
-            <div className="flex items-center gap-2">
-                <dt className="font-medium">전시관명</dt>
-                <dd className="text-gray-600">{exhibition.venueName}</dd>
-            </div>
-        )}
-        {(exhibition.area || exhibition.address) && (
-            <div className="flex items-center gap-2">
-                <dt className="font-medium">위치</dt>
-                <dd className="text-gray-600">{exhibition.address??exhibition.area}</dd>
-            </div>
-        )}
-
-    </dl>
+    <ExhibitionLocation exhibition={exhibition} />
     {exhibition.priceText && (
         <p className="text-sm font-medium">{exhibition.priceText}</p>
     )}
