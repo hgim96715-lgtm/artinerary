@@ -1,4 +1,5 @@
 import { getExhibition } from "@/lib/api";
+import { formatDescriptionForDisplay } from "@/lib/description";
 import { formatDateRange, getExhibitionStatus } from "@/lib/format";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -15,6 +16,7 @@ export default async function ExhibitionsDetailPage({params}:Props) {
     const status=getExhibitionStatus(exhibition.startDate,exhibition.endDate);
     // const place=getPlace(exhibition);
   return (
+    
    <article className="space-y-6">
     <Link href="/exhibitions" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600">
         <ArrowLeft/>
@@ -44,7 +46,32 @@ export default async function ExhibitionsDetailPage({params}:Props) {
     {exhibition.imageUrl && (
         <img src={exhibition.imageUrl} alt={exhibition.title} className="w-full max-h-96 object-cover rounded-lg mb-4" />
     )}
-    <p className="leading-relaxed whitespace-pre-wrap text-gray-800">{exhibition.description?? '전시 설명이 없습니다.'}</p>
+    {/* 디버깅용 지우지 말기! */}
+    {/* <pre className="text-xs overflow-auto rounded-lg color-white p-4">
+        {JSON.stringify(exhibition, null, 2)}
+    </pre> */}
+        <section className="space-y-3 text-sm">
+      {exhibition.description ? (
+        <p className="leading-relaxed whitespace-pre-wrap text-gray-800">
+          {formatDescriptionForDisplay(exhibition.description)}
+        </p>
+      ) : (
+        <p className="text-gray-500">
+          자세한 설명은 홈페이지를 참고해 주세요.
+        </p>
+      )}
+      {exhibition.sourceUrl && (
+        <a
+          href={exhibition.sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex text-blue-600 hover:underline"
+        >
+          홈페이지 바로가기
+        </a>
+      )}
+    </section>
    </article>
   );
+  
 }
