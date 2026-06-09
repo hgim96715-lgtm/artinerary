@@ -1,6 +1,7 @@
 import { getExhibition } from "@/lib/api";
-import { formatDateRange, getExhibitionStatus, getPlace } from "@/lib/format";
-import { ArrowLeft, Link } from "lucide-react";
+import { formatDateRange, getExhibitionStatus } from "@/lib/format";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 type Props={params:Promise<{id:string}>}

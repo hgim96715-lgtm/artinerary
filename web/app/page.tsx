@@ -29,12 +29,14 @@ export default async function Home() {
                 )}
             </div>
 
-            {preview.length===0?(
+            {exhibitions.length===0?(
+                <p className="text-gray-500">등록된 전시가 없습니다.</p>
+            ):preview.length===0?(
                 <p className="text-gray-500">지금 진행 중인 전시가 없습니다.</p>
             ):(
                 <ul className="space-y-4">
                     {preview.map((exhibition)=>(
-                        <li key={exhibition.id}><ExhibitionCard  exhibition={exhibition} /></li>
+                        <li key={exhibition.id}><ExhibitionCard exhibition={exhibition} /></li>
                     ))}
                 </ul>
             )}
