@@ -22,5 +22,126 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer base {
+  button:not(:disabled),
+  [role='button']:not(:disabled),
+  label {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  label:has(:disabled) {
+    cursor: not-allowed;
+  }
+
+  input:not([type='checkbox']):not([type='radio']):not([type='file']),
+  textarea,
+  select {
+    @apply w-full rounded border border-gray-200 bg-white px-3 py-2 text-sm text-foreground;
+  }
+
+  input:not([type='checkbox']):not([type='radio']):not([type='file']):disabled,
+  textarea:disabled,
+  select:disabled {
+    @apply cursor-not-allowed opacity-50;
+  }
+
+  input:not([type='checkbox']):not([type='radio']):not([type='file']):focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    @apply border-blue-300 outline-none ring-2 ring-blue-500/30;
+  }
+
+  input[type='checkbox'],
+  input[type='radio'] {
+    @apply size-4 accent-blue-500;
+  }
+}
+
+@layer components {
+  .label-field {
+    @apply mb-1 block text-sm font-medium;
+  }
+
+  .label-check {
+    @apply flex items-center gap-2 text-sm;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded bg-black px-4 py-2 text-sm text-white transition-opacity hover:opacity-90 disabled:opacity-50;
+  }
+
+  .btn-accent {
+    @apply inline-flex items-center justify-center rounded-lg bg-blue-500 px-4 py-2.5 text-sm text-white transition-opacity hover:opacity-90 disabled:opacity-50;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-lg bg-gray-200 px-4 py-2.5 text-sm text-gray-600 transition-opacity hover:opacity-90;
+  }
+
+  .btn-ghost {
+    @apply text-sm text-gray-600 underline hover:text-gray-800 disabled:opacity-50;
+  }
+
+  .btn-danger {
+    @apply text-sm text-red-600 underline hover:text-red-700 disabled:opacity-50;
+  }
+
+  .link-back {
+    @apply inline-flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600;
+  }
+
+  .link-action {
+    @apply text-sm underline hover:text-blue-600;
+  }
+
+  .text-error {
+    @apply text-sm text-red-600;
+  }
+
+  .text-success {
+    @apply text-sm text-green-600;
+  }
+
+  .text-muted {
+    @apply text-sm text-gray-500;
+  }
+
+  .text-warn {
+    @apply text-sm text-amber-600;
+  }
+
+  .page-title {
+    @apply text-2xl font-bold;
+  }
+
+  .filter-chip {
+    @apply rounded-full border px-3 py-1 text-sm transition-colors;
+  }
+
+  .filter-chip--active-blue {
+    @apply border-blue-500 bg-blue-500 text-white;
+  }
+
+  .filter-chip--inactive-blue {
+    @apply border-gray-200 bg-white text-gray-600 hover:border-blue-300;
+  }
+
+  .filter-chip--active-amber {
+    @apply border-amber-500 bg-amber-500 text-white;
+  }
+
+  .filter-chip--inactive-amber {
+    @apply border-gray-200 bg-white text-gray-600 hover:border-amber-300;
+  }
+
+  .dialog-overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4;
+  }
+
+  .dialog-panel {
+    @apply w-full max-w-md rounded-lg bg-white p-6 shadow-lg;
+  }
 }

@@ -18,6 +18,8 @@ export default function AdminExhibitionEditPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [previewError, setPreviewError] = useState(false);
 
   useEffect(() => {
     async function loadExhibition() {
@@ -30,6 +32,8 @@ export default function AdminExhibitionEditPage() {
         setDescription(row.description ?? '');
         setSourceUrl(row.sourceUrl ?? '');
         setIsVisible(row.isVisible);
+        setImageUrl(row.imageUrl ?? '');
+        setPreviewError(false);
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message);
@@ -54,6 +58,7 @@ export default function AdminExhibitionEditPage() {
         description: description || undefined,
         sourceUrl: sourceUrl || undefined,
         isVisible,
+        imageUrl: imageUrl.trim() ? imageUrl.trim() : null,
       });
       setMessage('저장되었습니다.');
     } catch (err: unknown) {
@@ -69,29 +74,23 @@ export default function AdminExhibitionEditPage() {
 
   return (
     <div className="space-y-6">
-      <Link
-        href="/admin/exhibitions"
-        className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600"
-      >
+      <Link href="/admin/exhibitions" className="link-back">
         <AlignLeft className="size-4" />
         <span>전시 목록</span>
       </Link>
 
       <header>
-        <h1 className="text-2xl font-bold">
+        <h1 className="page-title">
           {loading ? '불러오는 중…' : `${title} 수정`}
         </h1>
       </header>
 
       {loading ? (
-        <p className="text-sm text-gray-500">전시 정보를 불러오는 중입니다.</p>
+        <p className="text-muted">전시 정보를 불러오는 중입니다.</p>
       ) : (
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
-            <label
-              htmlFor="description"
-              className="block text-sm font-medium mb-1"
-            >
+            <label htmlFor="description" className="label-field">
               설명
             </label>
             <textarea
@@ -101,15 +100,11 @@ export default function AdminExhibitionEditPage() {
               placeholder="전시회에 대한 설명을 입력해 주세요."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full border rounded px-3 py-2"
             />
           </div>
 
           <div>
-            <label
-              htmlFor="sourceUrl"
-              className="block text-sm font-medium mb-1"
-            >
+            <label htmlFor="sourceUrl" className="label-field">
               홈페이지 URL
             </label>
             <input
@@ -119,39 +114,58 @@ export default function AdminExhibitionEditPage() {
               placeholder="전시 홈페이지 URL을 입력해주세요"
               value={sourceUrl}
               onChange={(e) => setSourceUrl(e.target.value)}
-              className="w-full border rounded px-3 py-2"
             />
           </div>
 
-          <label
-            htmlFor="isVisible"
-            className="flex items-center gap-2 text-sm cursor-pointer"
-          >
+          <div>
+            <label htmlFor="imageUrl" className="label-field">
+              이미지 URL
+            </label>
+            <input
+              type="url"
+              id="imageUrl"
+              name="imageUrl"
+              value={imageUrl}
+              onChange={(e) => {
+                setImageUrl(e.target.value);
+                setPreviewError(false);
+              }}
+            />
+            {imageUrl.trim() && !previewError ? (
+              <img
+                src={imageUrl.trim()}
+                alt={`${title}이미지 미리보기`}
+                className="mx-auto mt-3 max-h-64 rounded border bg-gray-50 object-contain"
+                onError={() => setPreviewError(true)}
+              />
+            ) : imageUrl.trim() && previewError ? (
+              <p className="text-warn mt-2">
+                이미지를 불러올 수 없습니다. 이미지 URL을 확인해 주세요.
+              </p>
+            ) : (
+              <p className="text-muted mt-2">미리보기가 없습니다.</p>
+            )}
+          </div>
+
+          <label htmlFor="isVisible" className="label-check">
             <input
               id="isVisible"
               name="isVisible"
               type="checkbox"
               checked={isVisible}
               onChange={(e) => setIsVisible(e.target.checked)}
-              className="size-4"
             />
             공개
           </label>
 
           {(message || error) && (
             <div aria-live="polite" className="space-y-1">
-              {message && (
-                <p className="text-green-600 text-sm">{message}</p>
-              )}
-              {error && <p className="text-red-600 text-sm">{error}</p>}
+              {message && <p className="text-success">{message}</p>}
+              {error && <p className="text-error">{error}</p>}
             </div>
           )}
 
-          <button
-            type="submit"
-            disabled={saving}
-            className="bg-black text-white rounded px-4 py-2 disabled:opacity-50"
-          >
+          <button type="submit" disabled={saving} className="btn-primary">
             {saving ? '저장 중…' : '저장'}
           </button>
         </form>

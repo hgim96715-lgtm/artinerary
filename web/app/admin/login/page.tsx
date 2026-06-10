@@ -33,11 +33,11 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-sm">
-      <h1 className="text-2xl font-bold">관리자 로그인</h1>
+    <div className="max-w-sm space-y-6">
+      <h1 className="page-title">관리자 로그인</h1>
       <form onSubmit={onSubmit} className="space-y-4">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium mb-1">
+          <label htmlFor="email" className="label-field">
             이메일
           </label>
           <input
@@ -48,12 +48,11 @@ export default function AdminLoginPage() {
             placeholder="admin@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full border rounded px-3 py-2"
             required
           />
         </div>
         <div>
-          <label htmlFor="password" className="block text-sm font-medium mb-1">
+          <label htmlFor="password" className="label-field">
             비밀번호
           </label>
           <input
@@ -64,16 +63,11 @@ export default function AdminLoginPage() {
             placeholder="비밀번호"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border rounded px-3 py-2"
             required
           />
         </div>
-        {error && <p className="text-red-600 text-sm">{error}</p>}
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full bg-black text-white rounded px-3 py-2 disabled:opacity-50"
-        >
+        {error && <p className="text-error">{error}</p>}
+        <button type="submit" disabled={submitting} className="btn-primary w-full">
           {submitting ? '로그인 중…' : '로그인'}
         </button>
       </form>

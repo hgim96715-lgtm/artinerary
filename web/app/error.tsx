@@ -15,7 +15,7 @@ export default function Error({ error, reset }: Props) {
       <h1 className="text-2xl font-bold">
         오류가 발생해서 전시를 불러오지 못했습니다.
       </h1>
-      <p className="text-gray-500">
+      <p className="text-muted">
         API 서버에 연결할 수 없습니다. 서버가 켜져 있는지 확인한 뒤 다시
         시도해 주세요.
       </p>
@@ -26,11 +26,11 @@ export default function Error({ error, reset }: Props) {
         <button
           type="button"
           onClick={reset}
-          className="rounded-lg bg-blue-500 text-white px-4 py-2.5 text-sm hover:opacity-90 cursor-pointer">
+          className="btn-accent">
           다시 시도
         </button>
         {pathname !=='/' && (
-        <Link href={"/"} className="rounded-lg bg-gray-200 text-gray-600 px-4 py-2.5 text-sm hover:opacity-90">
+        <Link href={"/"} className="btn-secondary">
             홈으로
         </Link>
         )}

@@ -19,7 +19,7 @@ export default async function ExhibitionsDetailPage({params}:Props) {
   return (
     
    <article className="space-y-6">
-    <Link href="/exhibitions" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600">
+    <Link href="/exhibitions" className="link-back">
         <ArrowLeft/>
         <span>전시 목록 보기</span>
     </Link>

@@ -15,7 +15,7 @@ export default async function Home() {
         <section className="space-y-3">
             <h1 className="text-3xl font-bold">지금 열리는 전시 🎨</h1>
             <p className="text-gray-600">지금 열리는 전시를 확인해보세요.</p>
-            <Link href="/exhibitions" className="inline-flex items-center gap-2 rounded-lg bg-blue-500 text-white px-4 py-2.5 hover:opacity-90">
+            <Link href="/exhibitions" className="btn-accent gap-2">
             전시 목록 보기
             <ArrowRight/>
             </Link>
@@ -25,14 +25,14 @@ export default async function Home() {
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold">진행 중인전시</h2>
                 {ongoing.length>3 && (
-                    <Link href="/exhibitions" className="text-sm text-gray-500 hover:text-blue-600">전체보기 <ArrowRight/></Link>
+                    <Link href="/exhibitions" className="link-back">전체보기 <ArrowRight/></Link>
                 )}
             </div>
 
             {exhibitions.length===0?(
-                <p className="text-gray-500">등록된 전시가 없습니다.</p>
+                <p className="text-muted">등록된 전시가 없습니다.</p>
             ):preview.length===0?(
-                <p className="text-gray-500">지금 진행 중인 전시가 없습니다.</p>
+                <p className="text-muted">지금 진행 중인 전시가 없습니다.</p>
             ):(
                 <ul className="space-y-4">
                     {preview.map((exhibition)=>(

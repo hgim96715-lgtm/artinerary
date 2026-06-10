@@ -12,11 +12,11 @@ export default async function ExhibitionsPage({searchParams}:Props) {
     return (
         <div className="space-y-6">
           <div className="space-y-3">
-            <h1 className="text-2xl font-bold">전시 목록</h1>
+            <h1 className="page-title">전시 목록</h1>
             <RegionFilter areas={areas} selectedArea={area} />
           </div>
           {exhibitions.length === 0 ? (
-            <p className="text-gray-500">
+            <p className="text-muted">
               {area
                 ? `${area}에 해당하는 전시가 없습니다.`
                 : '등록된 전시가 없습니다.'}
