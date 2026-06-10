@@ -24,6 +24,34 @@ export class ExhibitionsService {
       },
     });
   }
+  async findAllForAdmin() {
+    return this.prisma.exhibition.findMany({
+      orderBy: [{ isVisible: 'desc' }, { startDate: 'asc' }],
+      select: {
+        id: true,
+        title: true,
+        area: true,
+        venueName: true,
+        source: true,
+        isVisible: true,
+        startDate: true,
+        endDate: true,
+        description: true,
+        sourceUrl: true,
+      },
+    });
+  }
+  async findOneForAdmin(id: number) {
+    const exhibition = await this.prisma.exhibition.findUnique({
+      where: { id },
+    });
+    if (!exhibition) {
+      throw new NotFoundException(
+        `id:${id}에 맞는 전시회가 없습니다. 조회 불가능합니다.`,
+      );
+    }
+    return exhibition;
+  }
 
   async findAreaStats() {
     const rows = await this.prisma.exhibition.groupBy({
