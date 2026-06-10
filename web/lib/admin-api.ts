@@ -1,3 +1,5 @@
+import type { ExhibitionSource } from './types/exhibition';
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
 
 async function adminFetchAPI<T>(
@@ -16,7 +18,22 @@ async function adminFetchAPI<T>(
     throw new Error('Unauthorized');
   }
   if (!res.ok) {
-    throw new Error(`아이디 또는 비밀번호가 일치하지 않습니다.`);
+    let message = '요청에 실패했습니다.';
+    try {
+      const body = (await res.json()) as {
+        message?: string | string[];
+      };
+      if (Array.isArray(body.message)) {
+        message = body.message.join(', ');
+      } else if (typeof body.message === 'string') {
+        message = body.message;
+      }
+    } catch {
+      if (res.status === 400) {
+        message = '입력값을 확인해 주세요.';
+      }
+    }
+    throw new Error(message);
   }
   return res.json();
 }
@@ -26,12 +43,26 @@ export type AdminExhibitionRow = {
   title: string;
   area: string | null;
   venueName: string | null;
-  source: string;
+  source: ExhibitionSource;
   isVisible: boolean;
   startDate: string;
   endDate: string;
   description: string | null;
   sourceUrl: string | null;
+  imageUrl: string | null;
+};
+
+export type CreateExhibitionBody = {
+  title: string;
+  startDate: string;
+  endDate: string;
+  description?: string;
+  imageUrl?: string;
+  sourceUrl?: string;
+  venueName?: string;
+  area?: string;
+  address?: string;
+  isVisible?: boolean;
 };
 
 export type AdminMe = {
@@ -46,6 +77,15 @@ export function adminLogin(
   return adminFetchAPI('/auth/login', {
     method: 'POST',
     body: JSON.stringify({ email, password }),
+  });
+}
+
+export function createExhibition(
+  body: CreateExhibitionBody,
+): Promise<{ message: string; id: number }> {
+  return adminFetchAPI<{ message: string; id: number }>('/exhibitions', {
+    method: 'POST',
+    body: JSON.stringify(body),
   });
 }
 
@@ -75,10 +115,23 @@ export function adminExhibition(id: number): Promise<AdminExhibitionRow> {
 
 export function patchExhibition(
   id: number,
-  body: { description?: string; sourceUrl?: string; isVisible?: boolean },
+  body: {
+    description?: string;
+    sourceUrl?: string;
+    isVisible?: boolean;
+    imageUrl?: string | null;
+  },
 ): Promise<{ message: string; id: number }> {
   return adminFetchAPI<{ message: string; id: number }>(`/exhibitions/${id}`, {
     method: 'PATCH',
     body: JSON.stringify(body),
+  });
+}
+
+export function deleteExhibition(
+  id: number,
+): Promise<{ message: string; id: number }> {
+  return adminFetchAPI<{ message: string; id: number }>(`/exhibitions/${id}`, {
+    method: 'DELETE',
   });
 }
