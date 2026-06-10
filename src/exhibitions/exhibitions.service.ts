@@ -81,6 +81,11 @@ export class ExhibitionsService {
     };
   }
   async createExhibition(dto: CreateExhibitionDto) {
+    if (dto.endDate < dto.startDate) {
+      throw new BadRequestException(
+        '종료일은 시작일보다 이후여야 합니다. 다시 확인해주세요.',
+      );
+    }
     const created = await this.prisma.exhibition.create({
       data: {
         ...dto,
