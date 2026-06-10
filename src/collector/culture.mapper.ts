@@ -160,15 +160,45 @@ const parseFeeType = (price?: string): ExhibitionFeeType => {
   return ExhibitionFeeType.UNKNOWN;
 };
 
-const decodeXmlText = (value?: string) =>
-  value
-    ?.replace(/&amp;lt;/g, '<')
+const NAMED_XML_ENTITIES: Record<string, string> = {
+  '&nbsp;': ' ',
+  '&apos;': "'",
+  '&quot;': '"',
+  '&times;': '×',
+  '&middot;': '·',
+  '&hellip;': '…',
+  '&mdash;': '—',
+  '&ndash;': '–',
+};
+
+const decodeXmlEntities = (text: string) => {
+  let result = text
+    .replace(/&amp;lt;/g, '<')
     .replace(/&amp;gt;/g, '>')
     .replace(/&amp;amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&')
-    .trim() || null;
+    .replace(/&amp;/g, '&');
+
+  result = result.replace(/&#x([0-9a-fA-F]+);/g, (_, hex) =>
+    String.fromCodePoint(parseInt(hex, 16)),
+  );
+  result = result.replace(/&#(\d+);/g, (_, dec) =>
+    String.fromCodePoint(parseInt(dec, 10)),
+  );
+
+  for (const [entity, char] of Object.entries(NAMED_XML_ENTITIES)) {
+    result = result.replaceAll(entity, char);
+  }
+
+  return result;
+};
+
+const decodeXmlText = (value?: string) => {
+  const trimmed = value?.trim();
+  if (!trimmed) return null;
+  return decodeXmlEntities(trimmed) || null;
+};
 
 const toFloat = (value?: string) => {
   const n = Number(value);
@@ -183,7 +213,7 @@ export const mergeToExhibitionData = (
   const startDate = parseYmd(merged.startDate);
   const endDate = parseYmd(merged.endDate);
   const seq = merged.seq?.toString();
-  const title = merged.title?.trim();
+  const title = decodeXmlText(merged.title);
   if (!seq || !title || !startDate || !endDate) return null;
 
   const address =
@@ -201,9 +231,9 @@ export const mergeToExhibitionData = (
     sourceUrl: merged.placeUrl?.trim() || merged.url?.trim() || null,
     startDate,
     endDate,
-    priceText: merged.price?.trim() || null,
+    priceText: decodeXmlText(merged.price),
     feeType: parseFeeType(merged.price),
-    venueName: merged.place?.trim() || null,
+    venueName: decodeXmlText(merged.place),
     area: normalizeArea(merged.area, merged.placeAddr, merged.sigungu) || null,
     address,
     latitude: toFloat(merged.gpsY),

@@ -1,3 +1,42 @@
+const NAMED_XML_ENTITIES: Record<string, string> = {
+  '&nbsp;': ' ',
+  '&apos;': "'",
+  '&quot;': '"',
+  '&times;': '×',
+  '&middot;': '·',
+  '&hellip;': '…',
+  '&mdash;': '—',
+  '&ndash;': '–',
+};
+
+/** API/XML — `&lt;` `&#39;` `&times;` 등, DB에 그대로 있을 수 있음 */
+export function decodeXmlEntities(text: string) {
+  let result = text
+    .replace(/&amp;lt;/g, '<')
+    .replace(/&amp;gt;/g, '>')
+    .replace(/&amp;amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
+
+  result = result.replace(/&#x([0-9a-fA-F]+);/g, (_, hex) =>
+    String.fromCodePoint(parseInt(hex, 16)),
+  );
+  result = result.replace(/&#(\d+);/g, (_, dec) =>
+    String.fromCodePoint(parseInt(dec, 10)),
+  );
+
+  for (const [entity, char] of Object.entries(NAMED_XML_ENTITIES)) {
+    result = result.replaceAll(entity, char);
+  }
+
+  return result;
+}
+
+export function formatExhibitionTitle(title: string) {
+  return decodeXmlEntities(title);
+}
+
 export function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('ko-KR', {
     year: 'numeric',
