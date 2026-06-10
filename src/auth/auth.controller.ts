@@ -32,7 +32,7 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.USER)
+  @Roles(Role.ADMIN)
   me(@Req() req: { user: JwtPayload }) {
     return this.authService.me(req.user);
   }

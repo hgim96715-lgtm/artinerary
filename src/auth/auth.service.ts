@@ -21,7 +21,7 @@ export class AuthService {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
-    if (!user || user.role === Role.ADMIN) {
+    if (!user || user.role !== Role.ADMIN) {
       throw new UnauthorizedException(
         '이메일 또는 비밀번호가 일치하지 않습니다.',
       );
@@ -38,7 +38,7 @@ export class AuthService {
       role: user.role,
     };
 
-    const token = this.jwtService.signAsync(payload);
+    const token = await this.jwtService.signAsync(payload);
     const cookieName = this.configService.getOrThrow<string>(
       EnvKeys.COOKIE_NAME,
     );
