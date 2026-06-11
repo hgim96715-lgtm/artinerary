@@ -14,6 +14,8 @@ const prisma = new PrismaClient({
 async function main() {
   const email = process.env[EnvKeys.ADMIN_EMAIL];
   const password = process.env[EnvKeys.ADMIN_PASSWORD];
+  const nickname =
+    process.env[EnvKeys.ADMIN_NICKNAME] ?? email?.split('@')[0] ?? '관리자';
   if (!email || !password) {
     throw new Error(
       `${EnvKeys.ADMIN_EMAIL} / ${EnvKeys.ADMIN_PASSWORD} 가 .env 에 필요합니다.`,
@@ -24,8 +26,8 @@ async function main() {
 
   await prisma.user.upsert({
     where: { email },
-    create: { email, passwordHash, role: Role.ADMIN },
-    update: { passwordHash, role: Role.ADMIN },
+    create: { email, nickname, passwordHash, role: Role.ADMIN },
+    update: { nickname, passwordHash, role: Role.ADMIN },
   });
   console.log(`Admin seed 완료 :${email}`);
 }

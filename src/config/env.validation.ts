@@ -17,4 +17,5 @@ export const envValidationSchema = Joi.object({
   [EnvKeys.JWT_SECRET]: Joi.string().required(),
   [EnvKeys.JWT_EXPIRES_IN]: Joi.string().required(),
   [EnvKeys.COOKIE_NAME]: Joi.string().default('artinerary-auth-token'),
+  [EnvKeys.ADMIN_NICKNAME]: Joi.string(),
 });

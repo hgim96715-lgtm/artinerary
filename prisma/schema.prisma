@@ -56,6 +56,7 @@ model Exhibition {
 model User {
     id           Int      @id @default(autoincrement())
     email        String   @unique
+    nickname     String   @unique
     passwordHash String
     role         Role     @default(USER)
     createdAt    DateTime @default(now())
