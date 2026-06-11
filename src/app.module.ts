@@ -7,6 +7,7 @@ import { CollectorModule } from './collector/collector.module';
 import { WinstonModule } from 'nest-winston';
 import winston from 'winston';
 import { AuthModule } from './auth/auth.module';
+import { WishlistModule } from './wishlist/wishlist.module';
 @Module({
   imports: [
     WinstonModule.forRoot({
@@ -37,6 +38,7 @@ import { AuthModule } from './auth/auth.module';
     ExhibitionsModule,
     CollectorModule,
     AuthModule,
+    WishlistModule,
   ],
   controllers: [],
   providers: [],
