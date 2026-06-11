@@ -5,6 +5,7 @@ import { formatDateRange, formatExhibitionTitle, getExhibitionStatus } from "@/l
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { WishlistButton } from "@/components/WishlistButton";
 
 type Props={params:Promise<{id:string}>}
 
@@ -25,6 +26,7 @@ export default async function ExhibitionsDetailPage({params}:Props) {
     </Link>
     <span className={`inline-block text-xs px-2 py-0.5 rounded-full ${status.color} text-${status.color}-500`}>{status.label}</span>
     <h1 className="text-2xl font-bold">{formatExhibitionTitle(exhibition.title)}</h1>
+    <WishlistButton exhibitionId={exhibition.id} />
     <p className="text-gray-600">{formatDateRange(exhibition.startDate,exhibition.endDate)}</p>
     <ExhibitionLocation exhibition={exhibition} />
     {exhibition.priceText && (
