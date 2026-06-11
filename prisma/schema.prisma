@@ -41,28 +41,30 @@ model Exhibition {
     discountText String?
     feeType      ExhibitionFeeType @default(UNKNOWN)
 
-    venueName String?
-    area      String?
-    address   String?
-    latitude  Float?
-    longitude Float?
-    isVisible Boolean    @default(true)
-    createdAt DateTime   @default(now())
-    updatedAt DateTime   @updatedAt
-    wishlists Wishlist[]
+    venueName    String?
+    area         String?
+    address      String?
+    latitude     Float?
+    longitude    Float?
+    isVisible    Boolean       @default(true)
+    createdAt    DateTime      @default(now())
+    updatedAt    DateTime      @updatedAt
+    wishlists    Wishlist[]
+    visitRecords VisitRecord[]
 
     @@unique([apiProvider, externalId])
 }
 
 model User {
-    id           Int        @id @default(autoincrement())
-    email        String     @unique
-    nickname     String     @unique
+    id           Int           @id @default(autoincrement())
+    email        String        @unique
+    nickname     String        @unique
     passwordHash String
-    role         Role       @default(USER)
-    createdAt    DateTime   @default(now())
-    updatedAt    DateTime   @updatedAt
+    role         Role          @default(USER)
+    createdAt    DateTime      @default(now())
+    updatedAt    DateTime      @updatedAt
     wishlists    Wishlist[]
+    visitRecords VisitRecord[]
 }
 
 model Wishlist {
@@ -70,6 +72,24 @@ model Wishlist {
     userId       Int
     exhibitionId Int
     createdAt    DateTime   @default(now())
+    user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+    exhibition   Exhibition @relation(fields: [exhibitionId], references: [id], onDelete: Cascade)
+
+    @@unique([userId, exhibitionId])
+    @@index([userId])
+}
+
+model VisitRecord {
+    id           Int        @id @default(autoincrement())
+    userId       Int
+    exhibitionId Int
+    visitedAt    DateTime   @default(now())
+    note         String?
+    rating       Int?
+    photoUrl     String?
+    isPublic     Boolean    @default(false)
+    createdAt    DateTime   @default(now())
+    updatedAt    DateTime   @updatedAt
     user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
     exhibition   Exhibition @relation(fields: [exhibitionId], references: [id], onDelete: Cascade)
 
