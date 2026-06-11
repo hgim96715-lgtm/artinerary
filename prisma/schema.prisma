@@ -46,19 +46,33 @@ model Exhibition {
     address   String?
     latitude  Float?
     longitude Float?
-    isVisible Boolean  @default(true)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    isVisible Boolean    @default(true)
+    createdAt DateTime   @default(now())
+    updatedAt DateTime   @updatedAt
+    wishlists Wishlist[]
 
     @@unique([apiProvider, externalId])
 }
 
 model User {
-    id           Int      @id @default(autoincrement())
-    email        String   @unique
-    nickname     String   @unique
+    id           Int        @id @default(autoincrement())
+    email        String     @unique
+    nickname     String     @unique
     passwordHash String
-    role         Role     @default(USER)
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
+    role         Role       @default(USER)
+    createdAt    DateTime   @default(now())
+    updatedAt    DateTime   @updatedAt
+    wishlists    Wishlist[]
+}
+
+model Wishlist {
+    id           Int        @id @default(autoincrement())
+    userId       Int
+    exhibitionId Int
+    createdAt    DateTime   @default(now())
+    user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+    exhibition   Exhibition @relation(fields: [exhibitionId], references: [id], onDelete: Cascade)
+
+    @@unique([userId, exhibitionId])
+    @@index([userId])
 }
