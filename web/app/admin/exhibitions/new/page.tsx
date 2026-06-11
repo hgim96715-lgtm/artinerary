@@ -32,7 +32,7 @@ export default function AdminExhibitionNewPage() {
         } else {
           setError('알 수 없는 오류가 발생했습니다.');
         }
-        router.replace('/admin/login');
+        router.replace('/login');
       } finally {
         setLoading(false);
       }
