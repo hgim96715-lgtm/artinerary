@@ -61,7 +61,7 @@ export class AuthService {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
-    if (!user || user.role !== Role.ADMIN) {
+    if (!user) {
       throw new UnauthorizedException(
         '이메일 또는 비밀번호가 일치하지 않습니다.',
       );
