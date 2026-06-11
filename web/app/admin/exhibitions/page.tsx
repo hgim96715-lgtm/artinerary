@@ -4,14 +4,16 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { FilterChip } from '@/components/FilterChip';
 import { SourceBadge } from '@/components/SourceBadge';
 import {
+  adminCollect,
   type AdminExhibitionRow,
   adminExhibitions,
   adminLogout,
   adminMe,
+  type CollectResult,
   deleteExhibition,
 } from '@/lib/admin-api';
 import { formatExhibitionTitle } from '@/lib/format';
-import { PlusIcon, TrashIcon } from 'lucide-react';
+import { DownloadIcon, Loader2, PlusIcon, TrashIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -32,6 +34,8 @@ export default function AdminExhibitionsPage() {
     null,
   );
   const [deleting, setDeleting] = useState(false);
+  const [collecting, setCollecting] = useState(false);
+  const [collectResult, setCollectResult] = useState<CollectResult | null>(null);
 
   useEffect(() => {
     async function loadAdminPage() {
@@ -89,6 +93,25 @@ export default function AdminExhibitionsPage() {
       setDeleting(false);
     }
   }
+  async function onCollect() {
+    if (collecting) return;
+    const ok = window.confirm(
+      '문화 API 전시 수집을 시작합니다. 수 분 걸릴 수 있습니다. 계속할까요?',
+    );
+    if (!ok) return;
+    setCollecting(true);
+    setError('');
+    setCollectResult(null);
+    try {
+      const result = await adminCollect();
+      setCollectResult(result);
+      setRows(await adminExhibitions());
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : '수집에 실패했습니다.');
+    } finally {
+      setCollecting(false);
+    }
+  }
 
   const filteredRows = rows.filter((row) => {
     if (visibleFilter === 'visible' && !row.isVisible) return false;
@@ -117,6 +140,22 @@ export default function AdminExhibitionsPage() {
       </div>
 
       {error && <p className="text-error">{error}</p>}
+      {collecting && (
+        <p
+          className="text-muted flex items-center gap-2"
+          role="status"
+          aria-live="polite"
+        >
+          <Loader2 className="size-4 shrink-0 animate-spin" aria-hidden="true" />
+          문화 API 전시 수집 중입니다. 수 분 걸릴 수 있으니 탭을 닫지 마세요.
+        </p>
+      )}
+      {collectResult && !collecting && (
+        <p className="text-success" role="status">
+          수집 완료 — 저장 {collectResult.upserted}건, 건너뜀 {collectResult.skipped}
+          건, 실패 {collectResult.failed}건
+        </p>
+      )}
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
         <div className="flex-1">
@@ -129,12 +168,34 @@ export default function AdminExhibitionsPage() {
             placeholder="제목 · 장소 · 지역"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            disabled={collecting}
           />
         </div>
-        <Link href="/admin/exhibitions/new" className="btn-primary shrink-0 gap-2">
-          <PlusIcon className="size-4" />
-          전시 등록
-        </Link>
+        <div className="flex shrink-0 flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={onCollect}
+            disabled={collecting || loading}
+            aria-busy={collecting}
+            className="btn-secondary gap-2 disabled:opacity-50"
+          >
+            {collecting ? (
+              <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+            ) : (
+              <DownloadIcon className="size-4" aria-hidden="true" />
+            )}
+            {collecting ? '수집 중…' : 'API 수집'}
+          </button>
+          <Link
+            href="/admin/exhibitions/new"
+            className={`btn-primary gap-2 ${collecting ? 'pointer-events-none opacity-50' : ''}`}
+            aria-disabled={collecting}
+            tabIndex={collecting ? -1 : undefined}
+          >
+            <PlusIcon className="size-4" />
+            전시 등록
+          </Link>
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
@@ -149,7 +210,8 @@ export default function AdminExhibitionsPage() {
             key={value}
             as="button"
             active={visibleFilter === value}
-            onClick={() => setVisibleFilter(value)}
+            onClick={() => !collecting && setVisibleFilter(value)}
+            className={collecting ? 'pointer-events-none opacity-50' : ''}
           >
             {label}
           </FilterChip>
@@ -169,7 +231,8 @@ export default function AdminExhibitionsPage() {
             as="button"
             tone="amber"
             active={sourceFilter === value}
-            onClick={() => setSourceFilter(value)}
+            onClick={() => !collecting && setSourceFilter(value)}
+            className={collecting ? 'pointer-events-none opacity-50' : ''}
           >
             {label}
           </FilterChip>

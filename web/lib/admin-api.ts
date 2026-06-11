@@ -135,3 +135,17 @@ export function deleteExhibition(
     method: 'DELETE',
   });
 }
+
+export type CollectResult = {
+  listed: number;
+  filtered: number;
+  upserted: number;
+  skipped: number;
+  failed: number;
+};
+
+export function adminCollect(): Promise<CollectResult> {
+  return adminFetchAPI<CollectResult>('/collector/collect', {
+    method: 'POST',
+  });
+}
