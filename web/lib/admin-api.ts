@@ -68,6 +68,7 @@ export type CreateExhibitionBody = {
 export type AdminMe = {
   email: string;
   role: 'ADMIN';
+  nickname: string;
 };
 
 export function adminLogin(

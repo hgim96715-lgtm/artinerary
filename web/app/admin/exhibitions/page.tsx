@@ -38,6 +38,7 @@ export default function AdminExhibitionsPage() {
   const [collecting, setCollecting] = useState(false);
   const [collectResult, setCollectResult] = useState<CollectResult | null>(null);
   const [collectConfirmOpen, setCollectConfirmOpen] = useState(false);
+  const [nickname,setNickname]=useState('');
 
   useEffect(() => {
     async function loadAdminPage() {
@@ -46,6 +47,7 @@ export default function AdminExhibitionsPage() {
       try {
         const me = await adminMe();
         setEmail(me.email);
+        setNickname(me.nickname);
         setRows(await adminExhibitions());
       } catch (err: unknown) {
         if (err instanceof Error) {
@@ -143,7 +145,7 @@ export default function AdminExhibitionsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="page-title">전시 관리</h1>
+        <h1 className="page-title">{nickname? `${nickname} 관리자님의 관리창` : '전시 관리'}</h1>
         <div className="flex items-center gap-3 text-sm">
           {email && <span>{email}</span>}
           <button type="button" onClick={onLogout} className="link-action">

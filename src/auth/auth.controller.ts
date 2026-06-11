@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   Post,
   Req,
   Res,
@@ -15,9 +17,16 @@ import { Roles } from './decorator/roles.decorator';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { RolesGuard } from './guard/roles.guard';
 import { JwtPayload } from './strategy/jwt.strategy';
+import { SignupDto } from './dto/signup.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Post('signup')
+  @HttpCode(HttpStatus.CREATED)
+  signup(@Body() dto: SignupDto) {
+    return this.authService.signup(dto);
+  }
 
   @Post('login')
   login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
