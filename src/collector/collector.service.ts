@@ -4,6 +4,12 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CultureApiClient } from './culture-api.client';
 import { CULTURE_API_PROVIDER } from './culture-api.types';
 import { isExhibitionItem, mergeToExhibitionData } from './culture.mapper';
+import {
+  buildCollectorUpdate,
+  isManualDuplicateOf,
+  shouldSkipCollectorUpsert,
+} from './collector-merge';
+import { ExhibitionSource } from 'generated/prisma/client';
 
 export type CollectResult = {
   listed: number;
@@ -75,33 +81,45 @@ export class CollectorService {
             continue;
           }
 
-          await this.prisma.exhibition.upsert({
-            where: {
-              apiProvider_externalId: {
-                apiProvider: CULTURE_API_PROVIDER,
-                externalId: seq,
+          const where = {
+            apiProvider_externalId: {
+              apiProvider: CULTURE_API_PROVIDER,
+              externalId: seq,
+            },
+          };
+          const existing = await this.prisma.exhibition.findUnique({ where });
+          if (shouldSkipCollectorUpsert(existing)) {
+            result.skipped++;
+            this.logger.warn(`seq ${seq}: 이미 수집된 전시이므로 건너뜁니다`);
+            continue;
+          }
+          if (!existing) {
+            const manualCandidates = await this.prisma.exhibition.findMany({
+              where: {
+                source: ExhibitionSource.MANUAL,
+                externalId: null,
+                startDate: data.startDate as Date,
+                endDate: data.endDate as Date,
               },
-            },
-            create: data,
-            update: {
-              title: data.title,
-              description: data.description,
-              imageUrl: data.imageUrl,
-              sourceUrl: data.sourceUrl,
-              startDate: data.startDate,
-              endDate: data.endDate,
-              priceText: data.priceText,
-              feeType: data.feeType,
-              venueName: data.venueName,
-              area: data.area,
-              address: data.address,
-              latitude: data.latitude,
-              longitude: data.longitude,
-              isVisible: true,
-              source: data.source,
-            },
-          });
+            });
 
+            const duplicateManual = manualCandidates.find((manual) =>
+              isManualDuplicateOf(manual, data),
+            );
+            if (duplicateManual) {
+              result.skipped++;
+              this.logger.warn(
+                `seq ${seq}: MANUAL 중복 건 발견 - ${duplicateManual.id}`,
+              );
+              continue;
+            }
+            await this.prisma.exhibition.create({ data });
+          } else {
+            await this.prisma.exhibition.update({
+              where: { id: existing.id },
+              data: buildCollectorUpdate(existing, data),
+            });
+          }
           result.upserted++;
         } catch (error) {
           result.failed++;
