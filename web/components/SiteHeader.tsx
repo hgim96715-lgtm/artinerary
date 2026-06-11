@@ -42,7 +42,13 @@ export function SiteHeader() {
           <nav className="flex items-center gap-1 text-sm sm:gap-2">
             {loading ? null : user ? (
               <>
-                <span className="px-2 font-medium">{user.nickname}님</span>
+                {user.role === 'USER'? (
+                  <Link href="/mypage" className="nav-auth-link px-2">
+                    {user.nickname}님
+                  </Link>
+                ):(
+                    <span className="px-2 font-medium">{user.nickname}님</span>
+                )}
                 {user.role === 'ADMIN' && (
                   <Link href="/admin/exhibitions" className="nav-auth-link">
                     관리창
