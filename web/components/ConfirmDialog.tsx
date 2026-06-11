@@ -12,6 +12,7 @@ type ConfirmDialogProps = {
   onConfirm: () => void;
   onCancel: () => void;
   confirmClassName?: string;
+  cancelClassName?: string;
   confirmingLabel?: string;
 };
 
@@ -26,6 +27,7 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
   confirmClassName = 'btn-danger',
+  cancelClassName = 'btn-ghost',
 }: ConfirmDialogProps) {
   if (!open) return null;
 
@@ -38,7 +40,7 @@ export function ConfirmDialog({
       onClick={() => !confirming && onCancel()}
     >
       <div className="dialog-panel" onClick={(e) => e.stopPropagation()}>
-        <h2 id="confirm-dialog-title" className="text-lg font-semibold">
+        <h2 id="confirm-dialog-title" className="text-lg font-semibold text-muted">
           {title}
         </h2>
         <div className="mt-2 text-sm text-gray-600">{description}</div>
@@ -47,7 +49,7 @@ export function ConfirmDialog({
             type="button"
             disabled={confirming}
             onClick={onCancel}
-            className="btn-ghost"
+            className={cancelClassName}
           >
             {cancelLabel}
           </button>

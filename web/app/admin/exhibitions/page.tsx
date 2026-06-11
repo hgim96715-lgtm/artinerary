@@ -3,6 +3,7 @@
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { FilterChip } from '@/components/FilterChip';
 import { SourceBadge } from '@/components/SourceBadge';
+import { VisibleBadge } from '@/components/VisibleBadge';
 import {
   adminCollect,
   type AdminExhibitionRow,
@@ -36,6 +37,7 @@ export default function AdminExhibitionsPage() {
   const [deleting, setDeleting] = useState(false);
   const [collecting, setCollecting] = useState(false);
   const [collectResult, setCollectResult] = useState<CollectResult | null>(null);
+  const [collectConfirmOpen, setCollectConfirmOpen] = useState(false);
 
   useEffect(() => {
     async function loadAdminPage() {
@@ -70,6 +72,15 @@ export default function AdminExhibitionsPage() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [deleteTarget, deleting]);
 
+  useEffect(() => {
+    if (!collectConfirmOpen || collecting) return;
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') setCollectConfirmOpen(false);
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [collectConfirmOpen, collecting]);
+
   async function onLogout() {
     try {
       await adminLogout();
@@ -95,10 +106,7 @@ export default function AdminExhibitionsPage() {
   }
   async function onCollect() {
     if (collecting) return;
-    const ok = window.confirm(
-      '문화 API 전시 수집을 시작합니다. 수 분 걸릴 수 있습니다. 계속할까요?',
-    );
-    if (!ok) return;
+    setCollectConfirmOpen(false);
     setCollecting(true);
     setError('');
     setCollectResult(null);
@@ -127,6 +135,11 @@ export default function AdminExhibitionsPage() {
     return title.includes(q) || venueName.includes(q) || area.includes(q);
   });
 
+  const hasActiveFilter =
+    query.trim() !== '' ||
+    visibleFilter !== 'all' ||
+    sourceFilter !== 'all';
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -147,7 +160,7 @@ export default function AdminExhibitionsPage() {
           aria-live="polite"
         >
           <Loader2 className="size-4 shrink-0 animate-spin" aria-hidden="true" />
-          문화 API 전시 수집 중입니다. 수 분 걸릴 수 있으니 탭을 닫지 마세요.
+          문화 API 전시 수집 중입니다. 수십 분 걸릴 수 있으니 탭을 닫지 마세요.
         </p>
       )}
       {collectResult && !collecting && (
@@ -174,7 +187,7 @@ export default function AdminExhibitionsPage() {
         <div className="flex shrink-0 flex-wrap gap-2">
           <button
             type="button"
-            onClick={onCollect}
+            onClick={() => setCollectConfirmOpen(true)}
             disabled={collecting || loading}
             aria-busy={collecting}
             className="btn-secondary gap-2 disabled:opacity-50"
@@ -239,6 +252,14 @@ export default function AdminExhibitionsPage() {
         ))}
       </div>
 
+      {!loading && rows.length > 0 && (
+        <p className="text-muted" role="status">
+          {hasActiveFilter
+            ? `${filteredRows.length}건 (전체 ${rows.length}건)`
+            : `${rows.length}건`}
+        </p>
+      )}
+
       {loading ? (
         <p className="text-muted">목록을 불러오는 중입니다.</p>
       ) : rows.length === 0 ? (
@@ -272,6 +293,8 @@ export default function AdminExhibitionsPage() {
                   <span>{row.area ?? '지역 없음'}</span>
                   <span aria-hidden="true">·</span>
                   <SourceBadge source={row.source} />
+                  <span aria-hidden="true">·</span>
+                  <VisibleBadge isVisible={row.isVisible} />
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -314,6 +337,26 @@ export default function AdminExhibitionsPage() {
         confirmingLabel="삭제 중…"
         onConfirm={onDelete}
         onCancel={() => setDeleteTarget(null)}
+      />
+      <ConfirmDialog
+        open={collectConfirmOpen}
+        title="API 수집"
+        description={
+          <>
+            <p>문화 API에서 전시 목록을 가져와 DB에 반영합니다.</p>
+            <ul className="mt-3 list-disc space-y-1 pl-5 text-muted">
+              <li>수십 분 정도 걸릴 수 있습니다.</li>
+              <li>수집 중에는 이 탭을 닫지 마세요.</li>
+              <li>admin이 보정한 필드는 유지됩니다.</li>
+            </ul>
+          </>
+        }
+        confirmLabel="수집 시작"
+        cancelLabel="취소"
+        cancelClassName="btn-secondary"
+        confirmClassName="btn-primary"
+        onConfirm={onCollect}
+        onCancel={() => setCollectConfirmOpen(false)}
       />
     </div>
   );
