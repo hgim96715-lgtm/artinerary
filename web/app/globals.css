@@ -203,6 +203,47 @@ body {
     @apply border-gray-200 bg-white text-gray-600 hover:border-amber-300;
   }
 
+  /* 관람 기록 — 티켓 플립 카드 (mypage) */
+  .visit-ticket {
+    @apply w-full cursor-pointer border-0 bg-transparent p-0 text-left;
+    perspective: 1000px;
+  }
+
+  .visit-ticket-inner {
+    @apply relative aspect-[3/4] w-full transition-transform duration-500;
+    transform-style: preserve-3d;
+  }
+
+  .visit-ticket-inner--flipped {
+    transform: rotateY(180deg);
+  }
+
+  .visit-ticket-face {
+    @apply absolute inset-0 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm;
+    backface-visibility: hidden;
+  }
+
+  .visit-ticket-front {
+    @apply flex flex-col;
+  }
+
+  .visit-ticket-back {
+    transform: rotateY(180deg);
+    @apply flex flex-col p-4;
+  }
+
+  .visit-ticket-poster {
+    @apply relative min-h-0 flex-1 bg-gray-100;
+  }
+
+  .visit-ticket-poster img {
+    @apply h-full w-full object-cover;
+  }
+
+  .visit-ticket-date {
+    @apply border-t border-dashed border-gray-200 bg-white px-3 py-2.5 text-center text-sm font-medium text-gray-800;
+  }
+
   .dialog-overlay {
     @apply fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4;
   }

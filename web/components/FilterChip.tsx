@@ -31,19 +31,19 @@ type FilterChipLink = FilterChipBase & {
 type FilterChipProps = FilterChipButton | FilterChipLink;
 
 export function FilterChip(props: FilterChipProps) {
-  const { active, children, tone = 'blue', className = '' } = props;
+  const { active, children, tone = 'blue', className = '', } = props;
   const chipClass = `${filterChipClass(active, tone)} ${className}`.trim();
 
   if (props.as === 'link') {
     return (
-      <Link href={props.href} className={chipClass}>
+      <Link href={props.href} className={chipClass} >
         {children}
       </Link>
     );
   }
 
   return (
-    <button type="button" onClick={props.onClick} className={chipClass}>
+    <button type="button" onClick={props.onClick} className={chipClass} >
       {children}
     </button>
   );
