@@ -1,18 +1,31 @@
-import { Injectable, ServiceUnavailableException } from '@nestjs/common';
-import { Anthropic } from '@anthropic-ai/sdk';
+import {
+  Injectable,
+  Logger,
+  ServiceUnavailableException,
+} from '@nestjs/common';
+import { Anthropic, APIError } from '@anthropic-ai/sdk';
 import { ConfigService } from '@nestjs/config';
 import { EnvKeys } from 'src/config/env.keys';
 import { Exhibition } from 'generated/prisma/client';
 
 @Injectable()
 export class ExhibitionAiService {
+  private readonly logger = new Logger(ExhibitionAiService.name);
   private client: Anthropic | null = null;
 
   constructor(private readonly configService: ConfigService) {
-    const apiKey = this.configService.get<string>(EnvKeys.ANTHROPIC_API_KEY);
+    const apiKey = this.configService
+      .get<string>(EnvKeys.ANTHROPIC_API_KEY)
+      ?.trim();
     if (apiKey) {
       this.client = new Anthropic({ apiKey });
     }
+  }
+
+  private formatDate(value: Date | string): string {
+    const date = value instanceof Date ? value : new Date(value);
+    if (Number.isNaN(date.getTime())) return '미상';
+    return date.toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' });
   }
 
   async generateDescription(exhibition: Exhibition): Promise<string> {
@@ -21,22 +34,20 @@ export class ExhibitionAiService {
         'ANTHROPIC_API_KEY가 설정되지 않았습니다.',
       );
     }
-    const start = exhibition.startDate.toLocaleDateString('ko-KR', {
-      timeZone: 'Asia/Seoul',
-    });
-    const end = exhibition.endDate.toLocaleDateString('ko-KR', {
-      timeZone: 'Asia/Seoul',
-    });
+    const start = this.formatDate(exhibition.startDate);
+    const end = this.formatDate(exhibition.endDate);
     const place = [exhibition.venueName, exhibition.area, exhibition.address]
       .filter(Boolean)
       .join(' · ');
-    const message = await this.client.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 400,
-      messages: [
-        {
-          role: 'user',
-          content: `전시 목록·상세에 넣을 짧은 소개만 써줘.
+    let message;
+    try {
+      message = await this.client.messages.create({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 400,
+        messages: [
+          {
+            role: 'user',
+            content: `전시 목록·상세에 넣을 짧은 소개만 써줘.
                 
                 규칙:
                 - 2~4문장, 한국어
@@ -49,9 +60,24 @@ export class ExhibitionAiService {
             ${start} ~ ${end}
             ${exhibition.priceText ?? '미상'}
             `,
-        },
-      ],
-    });
+          },
+        ],
+      });
+    } catch (error: unknown) {
+      this.logger.error(
+        'Claude API 호출 실패',
+        error instanceof Error ? error.stack : String(error),
+      );
+      if (error instanceof APIError) {
+        throw new ServiceUnavailableException(
+          error.message || 'AI 생성에 실패했습니다.',
+        );
+      }
+      if (error instanceof Error) {
+        throw new ServiceUnavailableException(error.message);
+      }
+      throw new ServiceUnavailableException('AI 생성에 실패했습니다.');
+    }
     const block = message.content.find((b) => b.type === 'text');
     const text = block?.type === 'text' ? block.text.trim() : '';
     if (!text) {
