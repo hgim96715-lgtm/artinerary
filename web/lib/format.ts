@@ -77,6 +77,17 @@ export function getPlace(exhibition: {
     .join(' · ');
 }
 
+export function formatExhibitionPrice(exhibition: {
+  priceText: string | null;
+  feeType: 'FREE' | 'PAID' | 'UNKNOWN';
+}) {
+  const text = exhibition.priceText?.trim();
+  if (text) return decodeXmlEntities(text);
+  if (exhibition.feeType === 'FREE') return '무료';
+  if (exhibition.feeType === 'PAID') return '유료';
+  return '가격 정보 없음';
+}
+
 type LocationFields = {
   venueName: string | null;
   area: string | null;
@@ -204,3 +215,16 @@ export const getMapsSearchUrl = (
   }
   return null;
 };
+
+// 오늘 날짜 (한국 시간)
+export const formatToday = () =>
+  new Date().toLocaleDateString('ko-KR', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: 'long',
+    weekday: 'long',
+    day: 'numeric',
+  });
+
+export const formatTodayISO = () =>
+  new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });

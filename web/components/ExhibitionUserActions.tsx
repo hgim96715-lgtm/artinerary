@@ -45,7 +45,7 @@ export function ExhibitionUserActions({exhibitionId}:Props){
         if(loading) return null;
 
         return(
-            <>
+            <div className="exhibition-book-actions">
             <WishlistButton
             exhibitionId={exhibitionId}
             canUse={canUse}
@@ -61,7 +61,6 @@ export function ExhibitionUserActions({exhibitionId}:Props){
                 setStatus((s)=>({...s,visit,isWishlisted:visit?false:s.isWishlisted}))
             }}
             />
-            
-            </>
+            </div>
         )
 }

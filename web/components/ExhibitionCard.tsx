@@ -1,25 +1,52 @@
-import { getExhibition } from "@/lib/api"
-import { formatDateRange, formatExhibitionTitle, getExhibitionStatus, getPlace } from "@/lib/format"
-import { Exhibition } from "@/lib/types/exhibition"
-import Link from "next/link"
+import {
+  formatDateRange,
+  formatExhibitionTitle,
+  getExhibitionStatus,
+} from '@/lib/format';
+import { Exhibition } from '@/lib/types/exhibition';
+import Link from 'next/link';
 
-type Props={
-    exhibition:Exhibition
-}
+type Props = {
+  exhibition: Exhibition;
+};
 
-export const ExhibitionCard=({exhibition}:Props)=>{
-    const status=getExhibitionStatus(exhibition.startDate,exhibition.endDate);
-    const place=getPlace(exhibition);
-    return(
-        <Link href={`/exhibitions/${exhibition.id}`} className="block border border-gray-200 rounded-xl p-4 hover:bg-gray-100 hover:text-blue-600 transition-colors">
-            {exhibition.imageUrl&&(
-                <img src={exhibition.imageUrl} alt={exhibition.title} className="w-full h-40 object-cover rounded-lg mb-3" />)}
-                <span className={`inline-block text-xs px-2 py-0.5 rounded-full mb-2 ${status.color}`}>{status.label}</span>
-                <h2 className="text-lg font-semibold">{formatExhibitionTitle(exhibition.title)}</h2>
-                <p className="text-sm text-gray-600 mt-1">
-                    {formatDateRange(exhibition.startDate,exhibition.endDate)}
-                </p>
-                {place && <p className="text-sm text-gray-500 mt-1">{place}</p>}
-        </Link>
-    )
+export function ExhibitionCard({ exhibition }: Props) {
+  const status = getExhibitionStatus(
+    exhibition.startDate,
+    exhibition.endDate,
+  );
+  const title = formatExhibitionTitle(exhibition.title);
+  const ribbonClass =
+    status.label === '진행중'
+      ? 'ongoing'
+      : status.label === '예정'
+        ? 'upcoming'
+        : 'ended';
+
+  return (
+    <Link
+      href={`/exhibitions/${exhibition.id}`}
+      className="exhibition-book-mini group"
+    >
+      <div className="exhibition-book-mini-cover">
+        {exhibition.imageUrl ? (
+          <img src={exhibition.imageUrl} alt="" />
+        ) : (
+          <div className="exhibition-book-mini-placeholder">
+            <span aria-hidden>✦</span>
+            <p className="line-clamp-3">{title}</p>
+          </div>
+        )}
+        <span className={`exhibition-book-mini-ribbon exhibition-book-mini-ribbon--${ribbonClass}`}>
+          {status.label}
+        </span>
+      </div>
+      <div className="exhibition-book-mini-page">
+        <h2 className="exhibition-book-mini-title">{title}</h2>
+        <p className="exhibition-book-mini-date">
+          {formatDateRange(exhibition.startDate, exhibition.endDate)}
+        </p>
+      </div>
+    </Link>
+  );
 }

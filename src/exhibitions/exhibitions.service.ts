@@ -4,26 +4,54 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { ExhibitionFeeType, ExhibitionSource } from 'generated/prisma/client';
+import {
+  ExhibitionFeeType,
+  ExhibitionSource,
+  Prisma,
+} from 'generated/prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateExhibitionDto } from './dto/create-exhibition.dto';
 import { UpdateExhibitionDto } from './dto/update-exhibition.dto';
+import {
+  ExhibitionListStatus,
+  FilterExhibitionsDto,
+} from './dto/filter-exhibitions.dto';
 
 @Injectable()
 export class ExhibitionsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(area?: string) {
+  private buildStatusWhere(
+    status?: FilterExhibitionsDto['status'],
+  ): Prisma.ExhibitionWhereInput {
+    if (!status) return {};
+    const now = new Date();
+    if (status === 'ongoing') {
+      return { startDate: { lte: now }, endDate: { gte: now } };
+    }
+    if (status === 'upcoming') {
+      return { startDate: { gt: now } };
+    }
+    if (status === 'ended') {
+      return { endDate: { lt: now } };
+    }
+    return {};
+  }
+
+  async findAll(dto: FilterExhibitionsDto = {}) {
+    const { area, status } = dto;
     return this.prisma.exhibition.findMany({
       where: {
         isVisible: true,
         ...(area ? { area } : {}),
+        ...this.buildStatusWhere(status),
       },
       orderBy: {
         startDate: 'asc',
       },
     });
   }
+
   async findAllForAdmin() {
     return this.prisma.exhibition.findMany({
       orderBy: [{ isVisible: 'desc' }, { startDate: 'asc' }],
@@ -53,10 +81,14 @@ export class ExhibitionsService {
     return exhibition;
   }
 
-  async findAreaStats() {
+  async findAreaStats(status?: FilterExhibitionsDto['status']) {
     const rows = await this.prisma.exhibition.groupBy({
       by: ['area'],
-      where: { isVisible: true, area: { not: null } },
+      where: {
+        isVisible: true,
+        area: { not: null },
+        ...this.buildStatusWhere(status),
+      },
       _count: { _all: true },
       orderBy: { area: 'asc' },
     });

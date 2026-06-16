@@ -1,3 +1,4 @@
+import { ExhibitionListStatus } from './exhibition-list-params';
 import { Exhibition, ExhibitionDetailResponse } from './types/exhibition';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
@@ -26,9 +27,15 @@ async function fetchAPI<T>(
 }
 export type ExhibitionAreaStat = { area: string; count: number };
 
-export function getExhibitions(area?: string): Promise<Exhibition[]> {
-  const qs = area ? `?area=${encodeURIComponent(area)}` : '';
-  return fetchAPI<Exhibition[]>(`/exhibitions${qs}`);
+export function getExhibitions(
+  area?: string,
+  status?: ExhibitionListStatus,
+): Promise<Exhibition[]> {
+  const sp = new URLSearchParams();
+  if (area) sp.set('area', area);
+  if (status) sp.set('status', status);
+  const qs = sp.toString();
+  return fetchAPI<Exhibition[]>(`/exhibitions${qs ? `?${qs}` : ''}`);
 }
 
 export async function getExhibition(id: string | number): Promise<Exhibition> {
@@ -36,6 +43,13 @@ export async function getExhibition(id: string | number): Promise<Exhibition> {
   return json?.data;
 }
 
-export function getExhibitionAreas(): Promise<ExhibitionAreaStat[]> {
-  return fetchAPI<ExhibitionAreaStat[]>('/exhibitions/areas');
+export function getExhibitionAreas(
+  status?: ExhibitionListStatus,
+): Promise<ExhibitionAreaStat[]> {
+  const sp = new URLSearchParams();
+  if (status) sp.set('status', status);
+  const qs = sp.toString();
+  return fetchAPI<ExhibitionAreaStat[]>(
+    `/exhibitions/areas${qs ? `?${qs}` : ''}`,
+  );
 }

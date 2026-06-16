@@ -24,8 +24,8 @@ export class ExhibitionsController {
   constructor(private readonly exhibitionsService: ExhibitionsService) {}
 
   @Get('areas')
-  findAreas() {
-    return this.exhibitionsService.findAreaStats();
+  findAreas(@Query() query: FilterExhibitionsDto) {
+    return this.exhibitionsService.findAreaStats(query.status);
   }
 
   @Get('admin/list')
@@ -43,7 +43,7 @@ export class ExhibitionsController {
   }
   @Get()
   findAll(@Query() query: FilterExhibitionsDto) {
-    return this.exhibitionsService.findAll(query.area);
+    return this.exhibitionsService.findAll(query);
   }
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {

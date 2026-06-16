@@ -1,48 +1,48 @@
-import { getExhibitions } from "@/lib/api";
-import { isOngoing } from "@/lib/format";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import { ExhibitionCard } from "@/components/ExhibitionCard";
+import { getExhibitionAreas } from '@/lib/api';
+import { formatToday, formatTodayISO } from '@/lib/format';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
+import { AreaExhibitionChart } from '@/components/AreaExhibitionChart';
+import { WeatherByLocation } from '@/components/WeatherByLocation';
+import { HomeCalendar } from '@/components/HomeCalendar';
 
 export default async function Home() {
-    const exhibitions=await getExhibitions();
-    const ongoing=exhibitions.filter((exhibition)=>isOngoing(exhibition.startDate,exhibition.endDate));
-    const preview=ongoing.slice(0,3);
+  const areas = await getExhibitionAreas('ongoing');
 
-    
   return (
-    <div className="space-y-10">
-        <section className="space-y-3">
-            <h1 className="text-3xl font-bold">지금 열리는 전시 🎨</h1>
-            <p className="text-gray-600">지금 열리는 전시를 확인해보세요.</p>
-            <Link href="/exhibitions" className="btn-accent gap-2">
+    <div className="space-y-6">
+      <section className="exhibition-book-intro home-panel">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0 space-y-0.5">
+            <time
+              dateTime={formatTodayISO()}
+              className="block text-sm font-medium text-rose-400/90"
+            >
+              {formatToday()}
+            </time>
+            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+              지금 열리는 전시 🎨
+            </h1>
+            <p className="pt-0.5 text-sm text-muted">
+              지역별로 진행 중인 전시를 확인해 보세요.
+            </p>
+          </div>
+          <Link
+            href="/exhibitions?status=ongoing"
+            className="btn-accent inline-flex shrink-0 items-center gap-2 self-start sm:self-center"
+          >
             전시 목록 보기
-            <ArrowRight/>
-            </Link>
-        </section>
+            <ArrowRight className="size-4" aria-hidden />
+          </Link>
+        </div>
+      </section>
 
-        <section className="space-y-4">
-            <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">진행 중인전시</h2>
-                {ongoing.length>3 && (
-                    <Link href="/exhibitions" className="link-back">전체보기 <ArrowRight/></Link>
-                )}
-            </div>
+      <div className="grid gap-6 lg:grid-cols-2 lg:items-stretch">
+        <WeatherByLocation />
+        <HomeCalendar />
+      </div>
 
-            {exhibitions.length===0?(
-                <p className="text-muted">등록된 전시가 없습니다.</p>
-            ):preview.length===0?(
-                <p className="text-muted">지금 진행 중인 전시가 없습니다.</p>
-            ):(
-                <ul className="space-y-4">
-                    {preview.map((exhibition)=>(
-                        <li key={exhibition.id}><ExhibitionCard exhibition={exhibition} /></li>
-                    ))}
-                </ul>
-            )}
-
-        </section>
+      <AreaExhibitionChart areas={areas} status="ongoing" />
     </div>
-    
   );
 }

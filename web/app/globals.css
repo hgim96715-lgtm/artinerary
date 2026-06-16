@@ -3,11 +3,23 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* 브랜드 accent — 여기만 바꾸면 버튼·링크 톤이 같이 바뀜 */
+  --accent: #f43f5e;
+  --accent-hover: #e11d48;
+  --accent-foreground: #ffffff;
+  --accent-link: #e11d48;
+  --accent-link-hover: #be123c;
+  --accent-ring: rgb(244 63 94 / 0.3);
+  --accent-border: #fda4af;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-link: var(--accent-link);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -16,6 +28,13 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --accent: #fb7185;
+    --accent-hover: #f43f5e;
+    --accent-foreground: #1c1917;
+    --accent-link: #fb7185;
+    --accent-link-hover: #fda4af;
+    --accent-ring: rgb(251 113 133 / 0.35);
+    --accent-border: rgb(251 113 133 / 0.45);
   }
 }
 
@@ -51,12 +70,14 @@ body {
   input:not([type='checkbox']):not([type='radio']):not([type='file']):focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    @apply border-blue-300 outline-none ring-2 ring-blue-500/30;
+    border-color: var(--accent-border);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--accent-ring);
   }
 
   input[type='checkbox'],
   input[type='radio'] {
-    @apply size-4 accent-blue-500;
+    accent-color: var(--accent);
   }
 }
 
@@ -74,7 +95,7 @@ body {
   }
 
   .btn-accent {
-    @apply inline-flex items-center justify-center rounded-lg bg-blue-500 px-4 py-2.5 text-sm text-white transition-opacity hover:opacity-90 disabled:opacity-50;
+    @apply inline-flex items-center justify-center rounded-lg bg-accent px-4 py-2.5 text-sm text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-50;
   }
 
   .btn-secondary {
@@ -90,11 +111,11 @@ body {
   }
 
   .link-back {
-    @apply inline-flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600;
+    @apply inline-flex items-center gap-2 text-sm text-gray-500 hover:text-accent-link;
   }
 
   .link-action {
-    @apply text-sm underline hover:text-blue-600;
+    @apply text-sm underline hover:text-accent-link;
   }
 
   .text-error {
@@ -237,11 +258,259 @@ body {
   }
 
   .visit-ticket-poster img {
-    @apply h-full w-full object-cover;
+    @apply h-full w-full object-fill;
   }
 
   .visit-ticket-date {
     @apply border-t border-dashed border-gray-200 bg-white px-3 py-2.5 text-center text-sm font-medium text-gray-800;
+  }
+
+  /* 공개 전시 — 책 형식 카드 */
+  .exhibition-book-mini {
+    @apply flex h-full flex-col transition-transform duration-200;
+  }
+
+  .exhibition-book-mini:hover {
+    @apply -translate-y-1;
+  }
+
+  .exhibition-book-mini-cover {
+    @apply relative overflow-hidden rounded-r-md rounded-l-sm border border-amber-900/15 shadow-md;
+    box-shadow:
+      inset -6px 0 12px -4px rgb(120 53 15 / 0.25),
+      4px 6px 16px -4px rgb(0 0 0 / 0.15);
+  }
+
+  .exhibition-book-mini-cover img {
+    @apply aspect-[3/4] w-full object-fill;
+  }
+
+  .exhibition-book-mini-placeholder {
+    @apply flex aspect-[3/4] flex-col items-center justify-center gap-2 bg-gradient-to-br from-rose-100 via-amber-50 to-sky-100 p-4 text-center text-sm font-medium leading-snug text-amber-950/80;
+  }
+
+  .exhibition-book-mini-placeholder span {
+    @apply text-lg opacity-60;
+  }
+
+  .exhibition-book-mini-ribbon {
+    @apply absolute right-0 top-3 rounded-l-md px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm;
+  }
+
+  .exhibition-book-mini-ribbon--ongoing {
+    @apply bg-emerald-500;
+  }
+
+  .exhibition-book-mini-ribbon--upcoming {
+    @apply bg-sky-500;
+  }
+
+  .exhibition-book-mini-ribbon--ended {
+    @apply bg-stone-400;
+  }
+
+  .exhibition-book-mini-page {
+    @apply mt-2 rounded-lg border border-dashed border-amber-800/20 bg-[#fffaf3] px-3 py-2.5;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .exhibition-book-mini-page {
+      @apply border-amber-200/15 bg-[#2c261f];
+    }
+  }
+
+  .exhibition-book-mini-title {
+    @apply line-clamp-2 text-sm font-semibold leading-snug text-amber-950 group-hover:text-rose-700;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .exhibition-book-mini-title {
+      @apply text-amber-50 group-hover:text-rose-300;
+    }
+  }
+
+  .exhibition-book-mini-date {
+    @apply mt-1 line-clamp-1 text-[11px] text-amber-900/60;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .exhibition-book-mini-date {
+      @apply text-amber-100/60;
+    }
+  }
+
+  .exhibition-grid {
+    @apply grid gap-6 sm:grid-cols-2 lg:grid-cols-3;
+  }
+
+  /* 전시 상세 — 펼친 책 */
+  .exhibition-detail {
+    @apply space-y-5;
+  }
+
+  .exhibition-book {
+    @apply mx-auto flex w-full max-w-3xl flex-col overflow-hidden rounded-2xl shadow-xl sm:flex-row;
+    box-shadow:
+      0 20px 40px -12px rgb(120 53 15 / 0.2),
+      0 8px 16px -8px rgb(0 0 0 / 0.1);
+  }
+
+  .exhibition-book-cover-wrap {
+    @apply shrink-0 bg-gradient-to-r from-amber-900/30 to-transparent p-3 sm:w-[42%] sm:p-4;
+    background-color: #e8dcc8;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .exhibition-book-cover-wrap {
+      background-color: #3d3428;
+    }
+  }
+
+  .exhibition-book-cover {
+    @apply relative overflow-hidden rounded-r-lg rounded-l-md border border-amber-900/20 shadow-lg;
+    box-shadow: inset -8px 0 16px -6px rgb(69 26 3 / 0.35);
+  }
+
+  .exhibition-book-cover img {
+    @apply aspect-[3/4] w-full object-fill;
+  }
+
+  .exhibition-book-cover-placeholder {
+    @apply flex aspect-[3/4] flex-col items-center justify-center gap-3 bg-gradient-to-br from-rose-100 via-orange-50 to-amber-100 p-6 text-center text-base font-semibold leading-snug text-amber-950/85;
+  }
+
+  .exhibition-book-cover-deco {
+    @apply text-2xl text-rose-400/80;
+  }
+
+  .exhibition-book-ribbon {
+    @apply absolute right-0 top-4 rounded-l-lg px-3 py-1 text-xs font-bold tracking-wide text-white shadow-md;
+  }
+
+  .exhibition-book-ribbon--ongoing {
+    @apply bg-emerald-500;
+  }
+
+  .exhibition-book-ribbon--upcoming {
+    @apply bg-sky-500;
+  }
+
+  .exhibition-book-ribbon--ended {
+    @apply bg-stone-400;
+  }
+
+  .exhibition-book-page {
+    @apply flex min-w-0 flex-1 flex-col gap-4 bg-[#fffaf3] px-5 py-6 sm:px-7 sm:py-8;
+    background-image: linear-gradient(
+      90deg,
+      rgb(180 83 9 / 0.06) 0,
+      transparent 12px
+    );
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .exhibition-book-page {
+      @apply bg-[#2c261f] text-amber-50;
+      background-image: linear-gradient(
+        90deg,
+        rgb(251 191 36 / 0.08) 0,
+        transparent 14px
+      );
+    }
+  }
+
+  .exhibition-book-eyebrow {
+    @apply text-[11px] font-medium uppercase tracking-[0.2em] text-rose-400/90;
+  }
+
+  .exhibition-book-title {
+    @apply text-xl font-bold leading-snug text-amber-950 sm:text-2xl;
+    font-family: Georgia, 'Times New Roman', serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .exhibition-book-title {
+      @apply text-amber-50;
+    }
+  }
+
+  .exhibition-book-actions {
+    @apply flex flex-wrap gap-3 rounded-xl border border-dashed border-rose-200 bg-rose-50/50 px-3 py-2.5 text-sm;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .exhibition-book-actions {
+      @apply border-rose-200/20 bg-rose-950/20;
+    }
+  }
+
+  .exhibition-book-facts {
+    @apply space-y-2.5 text-sm;
+  }
+
+  .exhibition-book-fact {
+    @apply flex flex-col gap-1 rounded-lg border border-amber-900/10 bg-white/60 px-3 py-2.5 sm:flex-row sm:gap-3;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .exhibition-book-fact {
+      @apply border-amber-100/10 bg-black/15;
+    }
+  }
+
+  .exhibition-book-fact-label {
+    @apply inline-flex shrink-0 items-center gap-1 text-xs font-bold text-rose-500/90 sm:w-14;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .exhibition-book-fact-label {
+      @apply text-rose-300/90;
+    }
+  }
+
+  .exhibition-book-fact-value {
+    @apply min-w-0 leading-snug text-amber-950/90;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .exhibition-book-fact-value {
+      @apply text-amber-50/90;
+    }
+  }
+
+  .exhibition-book-link {
+    @apply font-medium text-rose-600 hover:text-rose-700 hover:underline;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .exhibition-book-link {
+      @apply text-rose-300 hover:text-rose-200;
+    }
+  }
+
+  /* 책 아래 — 긴 소개 */
+  .exhibition-book-intro {
+    @apply mx-auto mt-6 w-full max-w-3xl rounded-2xl border border-amber-900/10 bg-[#fffaf3] px-5 py-6 text-sm shadow-md sm:px-7 sm:py-8;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .exhibition-book-intro {
+      @apply border-amber-100/10 bg-[#2c261f] text-amber-50 shadow-lg shadow-black/20;
+    }
+  }
+
+  .exhibition-book-intro-title {
+    @apply mb-3 text-xs font-bold tracking-[0.2em] text-rose-400/90 uppercase;
+  }
+
+  .exhibition-book-intro-body {
+    @apply text-amber-950/90;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .exhibition-book-intro-body {
+      @apply text-amber-50/90;
+    }
   }
 
   .dialog-overlay {
@@ -250,5 +519,61 @@ body {
 
   .dialog-panel {
     @apply w-full max-w-md rounded-lg bg-white p-6 shadow-lg;
+  }
+
+  .exhibition-book-intro.home-panel {
+    @apply mt-0 max-w-none px-4 py-4 sm:px-5 sm:py-5;
+  }
+}
+
+/* 홈 — 달력 (react-day-picker) */
+.home-calendar.rdp-root {
+  --rdp-accent-color: #fb7185;
+  --rdp-accent-background-color: rgb(255 241 242 / 0.9);
+  --rdp-today-color: #f59e0b;
+  --rdp-day-height: 1.75rem;
+  --rdp-day-width: 1.75rem;
+  --rdp-day_button-height: 1.5rem;
+  --rdp-day_button-width: 1.5rem;
+  --rdp-nav_button-height: 1.5rem;
+  --rdp-nav_button-width: 1.5rem;
+  --rdp-nav-height: 1.75rem;
+  --rdp-weekday-padding: 0.125rem 0;
+  width: 100%;
+  max-width: 16rem;
+  margin-inline: auto;
+  font-size: 0.8125rem;
+}
+
+.home-calendar .rdp-month_caption {
+  height: var(--rdp-nav-height);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.home-calendar .rdp-weekday {
+  font-size: 0.6875rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .home-calendar.rdp-root {
+    --rdp-accent-background-color: rgb(251 113 133 / 0.2);
+    color: rgb(254 243 199 / 0.92);
+  }
+
+  .home-calendar .rdp-weekday {
+    color: rgb(254 243 199 / 0.55);
+  }
+
+  .home-calendar .rdp-caption_label {
+    color: rgb(254 243 199 / 0.92);
+  }
+
+  .home-calendar .rdp-chevron {
+    fill: #fb7185;
+  }
+
+  .home-calendar .rdp-day_button {
+    color: inherit;
   }
 }
