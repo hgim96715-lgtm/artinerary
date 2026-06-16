@@ -20,9 +20,5 @@ export const envValidationSchema = Joi.object({
   [EnvKeys.JWT_EXPIRES_IN]: Joi.string().required(),
   [EnvKeys.COOKIE_NAME]: Joi.string().default('artinerary-auth-token'),
   [EnvKeys.ADMIN_NICKNAME]: Joi.string(),
-  [EnvKeys.FRONTEND_URL]: Joi.when(EnvKeys.NODE_ENV, {
-    is: Joi.valid('prod', 'production'),
-    then: Joi.string().uri().required(),
-    otherwise: Joi.string().uri().optional(),
-  }),
+  [EnvKeys.FRONTEND_URL]: Joi.string().uri().optional(),
 });
