@@ -82,12 +82,12 @@ export class AuthService {
     const cookieName = this.configService.getOrThrow<string>(
       EnvKeys.COOKIE_NAME,
     );
-    const isProd =
-      this.configService.getOrThrow<string>(EnvKeys.NODE_ENV) === 'prod';
+    const nodeEnv = this.configService.getOrThrow<string>(EnvKeys.NODE_ENV);
+    const isProd = nodeEnv === 'prod' || nodeEnv === 'production';
     res.cookie(cookieName, token, {
       httpOnly: true,
       secure: isProd,
-      sameSite: 'lax',
+      sameSite: isProd ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: '/',
     });
@@ -102,7 +102,13 @@ export class AuthService {
     const cookieName = this.configService.getOrThrow<string>(
       EnvKeys.COOKIE_NAME,
     );
-    res.clearCookie(cookieName, { path: '/' });
+    const nodeEnv = this.configService.getOrThrow<string>(EnvKeys.NODE_ENV);
+    const isProd = nodeEnv === 'prod' || nodeEnv === 'production';
+    res.clearCookie(cookieName, {
+      path: '/',
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
+    });
     return { message: '로그아웃 성공' };
   }
   async me(payload: JwtPayload) {

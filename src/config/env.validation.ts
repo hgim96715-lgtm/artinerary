@@ -8,7 +8,9 @@ export const envValidationSchema = Joi.object({
   [EnvKeys.POSTGRES_USER]: Joi.string().required(),
   [EnvKeys.POSTGRES_PASSWORD]: Joi.string().required(),
   [EnvKeys.POSTGRES_DB]: Joi.string().required().default('artinerary'),
-  [EnvKeys.NODE_ENV]: Joi.string().valid('dev', 'prod', 'test').default('dev'),
+  [EnvKeys.NODE_ENV]: Joi.string()
+    .valid('dev', 'prod', 'production', 'test')
+    .default('dev'),
   [EnvKeys.API_FORMAT]: Joi.string(),
   [EnvKeys.API_EXHIBITION_BASE_URL]: Joi.string().uri(),
   [EnvKeys.API_EXHIBITION_KEY]: Joi.string(),
@@ -18,5 +20,9 @@ export const envValidationSchema = Joi.object({
   [EnvKeys.JWT_EXPIRES_IN]: Joi.string().required(),
   [EnvKeys.COOKIE_NAME]: Joi.string().default('artinerary-auth-token'),
   [EnvKeys.ADMIN_NICKNAME]: Joi.string(),
-  [EnvKeys.FRONTEND_URL]: Joi.string().uri().optional(),
+  [EnvKeys.FRONTEND_URL]: Joi.when(EnvKeys.NODE_ENV, {
+    is: Joi.valid('prod', 'production'),
+    then: Joi.string().uri().required(),
+    otherwise: Joi.string().uri().optional(),
+  }),
 });
