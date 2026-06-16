@@ -16,10 +16,14 @@ import {
   ExhibitionListStatus,
   FilterExhibitionsDto,
 } from './dto/filter-exhibitions.dto';
+import { ExhibitionAiService } from './exhibition-ai.service';
 
 @Injectable()
 export class ExhibitionsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly exhibitionAiService: ExhibitionAiService,
+  ) {}
 
   private buildStatusWhere(
     status?: FilterExhibitionsDto['status'],
@@ -36,6 +40,13 @@ export class ExhibitionsService {
       return { endDate: { lt: now } };
     }
     return {};
+  }
+
+  async generateDescriptionForAdmin(id: number) {
+    const exhibition = await this.findOneForAdmin(id);
+    const description =
+      await this.exhibitionAiService.generateDescription(exhibition);
+    return { description };
   }
 
   async findAll(dto: FilterExhibitionsDto = {}) {

@@ -34,6 +34,12 @@ export class ExhibitionsController {
   findAllForAdmin() {
     return this.exhibitionsService.findAllForAdmin();
   }
+  @Post('admin/:id/generate-description')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  generateDescriptionForAdmin(@Param('id', ParseIntPipe) id: number) {
+    return this.exhibitionsService.generateDescriptionForAdmin(id);
+  }
 
   @Get('admin/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)

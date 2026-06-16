@@ -150,3 +150,16 @@ export function adminCollect(): Promise<CollectResult> {
     method: 'POST',
   });
 }
+
+// AI
+
+export function generateExhibitionDescription(
+  id: number,
+): Promise<{ description: string }> {
+  return adminFetchAPI<{ description: string }>(
+    `/exhibitions/admin/${id}/generate-description`,
+    {
+      method: 'POST',
+    },
+  );
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { adminExhibition, adminMe, patchExhibition } from '@/lib/admin-api';
+import { adminExhibition, adminMe, generateExhibitionDescription, patchExhibition } from '@/lib/admin-api';
 import { formatExhibitionTitle } from '@/lib/format';
 import { AlignLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -20,6 +20,24 @@ export default function AdminExhibitionEditPage() {
   const [error, setError] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [previewError, setPreviewError] = useState(false);
+  const [generating, setGenerating] = useState(false);
+
+  const onGenerateDescription = async () => {
+    if (description.trim() && !confirm('기존 설명을 덮어쓸까요?')) return;
+    setGenerating(true);
+    setError('');
+    try {
+      const { description: generated } = await generateExhibitionDescription(
+        Number(id),
+      );
+      setDescription(generated);
+      setMessage('AI 소개를 생성했어요. 확인 후 저장해 주세요.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'AI 생성 실패');
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   useEffect(() => {
     async function loadExhibition() {
@@ -90,9 +108,19 @@ export default function AdminExhibitionEditPage() {
       ) : (
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
-            <label htmlFor="description" className="label-field">
-              설명
-            </label>
+            <div className="mb-1 flex flex-wrap items-center gap-2">
+              <label htmlFor="description" className="label-field !mb-0">
+                설명
+              </label>
+              <button
+                type="button"
+                className="btn-secondary text-xs"
+                onClick={onGenerateDescription}
+                disabled={generating || saving}
+              >
+                {generating ? '생성 중…' : 'AI 설명 생성'}
+              </button>
+            </div>
             <textarea
               id="description"
               name="description"
