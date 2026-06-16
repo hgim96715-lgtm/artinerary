@@ -31,7 +31,7 @@ export class ExhibitionAiService {
       .filter(Boolean)
       .join(' · ');
     const message = await this.client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6',
       max_tokens: 400,
       messages: [
         {
