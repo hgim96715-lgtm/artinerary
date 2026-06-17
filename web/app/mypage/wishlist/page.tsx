@@ -35,6 +35,10 @@ export default function MyPageWishlistPage() {
     return <p className="text-error">{error}</p>;
   }
 
+  const onRemoveWishlist = (exhibitionId: number) => {
+    setItems((prev) => prev.filter((item) => item.id !== exhibitionId));
+  };
+
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-semibold">찜한 전시</h2>
@@ -51,7 +55,7 @@ export default function MyPageWishlistPage() {
         <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           {items.map((item) => (
             <li key={item.id}>
-              <WishlistRecordCard item={item} />
+              <WishlistRecordCard item={item} onRemove={onRemoveWishlist} />
             </li>
           ))}
         </ul>

@@ -10,6 +10,9 @@ type Props = {
   visit: VisitItem;
 };
 
+
+
+
 function formatVisitedAt(iso: string) {
   return iso.slice(0, 10).replace(/-/g, '.');
 }
@@ -33,6 +36,7 @@ export function VisitRecordCard({ visit }: Props) {
   const [flipped, setFlipped] = useState(false);
   const place = getPlace({ ...visit, address: null });
   const title = formatExhibitionTitle(visit.title);
+  const posterSrc=visit.photoUrl?? visit.imageUrl;
 
   function onFlip() {
     setFlipped((v) => !v);
@@ -51,8 +55,8 @@ export function VisitRecordCard({ visit }: Props) {
       >
         <div className="visit-ticket-face visit-ticket-front">
           <div className="visit-ticket-poster">
-            {visit.imageUrl ? (
-              <img src={visit.imageUrl} alt="" />
+            {posterSrc ? (
+              <img src={posterSrc} alt="" />
             ) : (
               <div className="flex h-full items-center justify-center p-4 text-center text-sm font-medium text-gray-500">
                 {title}

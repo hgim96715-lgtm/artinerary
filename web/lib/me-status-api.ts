@@ -6,6 +6,7 @@ export type ExhibitionVisitHistory = {
   note: string | null;
   rating: number | null;
   isPublic: boolean;
+  photoUrl?: string | null;
 };
 
 export type ExhibitionMeStatus = {

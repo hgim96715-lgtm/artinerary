@@ -49,6 +49,7 @@ export type VisitItem = {
   imageUrl: string | null;
   startDate: string;
   endDate: string;
+  photoUrl?: string | null;
 };
 
 export type UpsertVisitBody = {
@@ -56,6 +57,7 @@ export type UpsertVisitBody = {
   note?: string;
   rating?: number;
   isPublic?: boolean;
+  photoUrl?: string;
 };
 
 export function getMyVisits(): Promise<VisitItem[]> {

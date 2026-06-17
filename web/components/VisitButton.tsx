@@ -4,7 +4,8 @@ import { ExhibitionVisitHistory } from '@/lib/me-status-api';
 import { upsertVisit } from '@/lib/visit-api';
 import { ArrowRight, Star } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState,useRef } from 'react';
+import { uploadVisitPhoto } from '@/lib/upload-api';
 
 type Props = {
   exhibitionId: number;
@@ -16,6 +17,10 @@ type Props = {
 function toDateInputValue(iso: string) {
   return iso.slice(0, 10);
 }
+
+const ALLOWED_PHOTO_MIME = ['image/jpeg', 'image/png', 'image/webp'];
+const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
+
 
 export function VisitButton({
   exhibitionId,
@@ -29,6 +34,11 @@ export function VisitButton({
   const [rating, setRating] = useState<number | null>(null);
   const [note, setNote] = useState('');
   const [isPublic, setIsPublic] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState('');
+  const [photoPreview, setPhotoPreview] = useState('');
+  const [photoUploading, setPhotoUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState('');
 
   function openModal() {
@@ -38,15 +48,73 @@ export function VisitButton({
       setRating(visit.rating ?? null);
       setNote(visit.note ?? '');
       setIsPublic(visit.isPublic);
+      setPhotoUrl(visit.photoUrl ?? '');
+      setPhotoPreview(visit.photoUrl ?? '');
     } else {
       setVisitedAt(today);
       setRating(null);
       setNote('');
       setIsPublic(false);
+      setPhotoUrl('');
+      setPhotoPreview('');
     }
     setError('');
     setOpen(true);
   }
+
+  const applyPhotoFile=async(file:File)=>{
+    if(!ALLOWED_PHOTO_MIME.includes(file.type)){
+        setError('지원하지 않는 파일 형식입니다. jpeg, png, webp만 업로드할 수 있습니다.');
+        return;
+    }
+    if(file.size>MAX_PHOTO_BYTES){
+        setError('파일 크기가 너무 큽니다. 최대 5MB까지 업로드할 수 있습니다.');
+        return;
+    }
+    setError('');
+    setPhotoUploading(true);
+
+    const localPreview=URL.createObjectURL(file);
+    setPhotoPreview(localPreview);
+
+    try{
+        const {url}=await uploadVisitPhoto(file);
+        setPhotoUrl(url);
+        setPhotoPreview(url);
+    }catch(err:unknown){
+        setPhotoUrl('');
+        setPhotoPreview('');
+        setError(err instanceof Error ? err.message : '사진 업로드에 실패했습니다.');
+    }finally{
+        URL.revokeObjectURL(localPreview);
+        setPhotoUploading(false);
+    }
+  };
+
+  const onPhotoInputChange=(e:React.ChangeEvent<HTMLInputElement>)=>{
+    const file=e.target.files?.[0];
+    e.target.value='';
+    if(file){
+        applyPhotoFile(file);
+    }
+  };
+
+  const onPhotoDrop=(e:React.DragEvent)=>{
+    e.preventDefault();
+    setDragOver(true);
+    const file=e.dataTransfer.files?.[0];
+    if(file){
+        applyPhotoFile(file);
+    }
+  };
+
+  const onRemovePhoto=()=>{
+    setPhotoUrl('');
+    setPhotoPreview('');
+    setError('');
+  }
+
+
 
   const submit: React.SubmitEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
@@ -59,9 +127,16 @@ export function VisitButton({
         note?: string;
         rating?: number;
         isPublic?: boolean;
+        photoUrl?: string;
       } = {
         isPublic,
       };
+      const trimmedPhoto=photoUrl.trim();
+      if(trimmedPhoto){
+        body.photoUrl=trimmedPhoto;
+      }else if (visit){
+        body.photoUrl='';
+      }
       const visitedAtIso = visitedAt
         ? new Date(`${visitedAt}T12:00:00`).toISOString()
         : new Date().toISOString();
@@ -81,6 +156,7 @@ export function VisitButton({
         note: note.trim() || null,
         rating: rating ?? null,
         isPublic,
+        photoUrl:trimmedPhoto|| null,
       });
       setOpen(false);
     } catch (err: unknown) {
@@ -205,6 +281,65 @@ export function VisitButton({
                   rows={3}
                 />
               </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-sm font-medium text-muted">
+                  관람 사진 (선택)
+                </span>
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setDragOver(true);
+                  }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={onPhotoDrop}
+                  onClick={() => fileInputRef.current?.click()}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      fileInputRef.current?.click();
+                    }
+                  }}
+                  className={`flex min-h-28 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-4 text-center text-sm transition-colors ${
+                    dragOver
+                      ? 'border-rose-400 bg-rose-50'
+                      : 'border-gray-300 bg-gray-50 hover:border-gray-400'
+                  }`}
+                >
+                  {photoUploading ? (
+                    <p className="text-muted">업로드 중…</p>
+                  ) : photoPreview ? (
+                    <img
+                      src={photoPreview}
+                      alt=""
+                      className="max-h-32 w-full rounded object-contain"
+                    />
+                  ) : (
+                    <p className="text-muted">
+                      사진을 끌어다 놓거나 클릭해서 선택
+                      <br />
+                      <span className="text-xs">jpeg · png · webp · 최대 5MB</span>
+                    </p>
+                  )}
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="sr-only"
+                  onChange={onPhotoInputChange}
+                />
+                {photoPreview && !photoUploading && (
+                  <button
+                    type="button"
+                    onClick={onRemovePhoto}
+                    className="text-xs font-medium text-red-600"
+                  >
+                    사진 제거
+                  </button>
+                )}
+              </div>
               <div className="flex flex-row items-center gap-2">
                 <label
                   htmlFor="isPublic"
@@ -231,7 +366,7 @@ export function VisitButton({
                 </button>
                 <button
                   type="submit"
-                  disabled={submitting}
+                  disabled={submitting || photoUploading}
                   className="btn-primary"
                 >
                   저장
