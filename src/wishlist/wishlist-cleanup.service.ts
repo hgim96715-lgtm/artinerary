@@ -12,12 +12,12 @@ export class WishlistCleanupService {
     private readonly logger: LoggerService,
   ) {}
 
-  /* 매일 00:05 KST */
+  /* 매일 00:05:00 KST에 실행 */
   @Cron('5 0 * * *', {
     timeZone: 'Asia/Seoul',
     name: 'wishlistCleanup',
   })
-  purgeStaleWishlists = async () => {
+  async purgeStaleWishlists() {
     const result = await this.prisma.wishlist.deleteMany({
       where: { exhibition: buildStaleWishlistExhibitionWhere() },
     });
