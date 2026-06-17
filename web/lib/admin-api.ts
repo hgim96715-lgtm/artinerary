@@ -175,8 +175,13 @@ export function adminExhibition(id: number): Promise<AdminExhibitionRow> {
 export function patchExhibition(
   id: number,
   body: {
+    title?: string;
+    startDate?: string;
+    endDate?: string;
     description?: string;
     sourceUrl?: string;
+    venueName?: string;
+    area?: string;
     isVisible?: boolean;
     imageUrl?: string | null;
   },

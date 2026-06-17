@@ -118,6 +118,34 @@ body {
     @apply text-sm underline hover:text-accent-link;
   }
 
+  .input-date-wrap {
+    @apply relative;
+  }
+
+  .input-date-wrap input[type='date'] {
+    @apply w-full pr-10;
+    color-scheme: light;
+  }
+
+  .input-date-wrap input[type='date']::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+  }
+
+  .input-date-btn {
+    @apply absolute top-1/2 right-1.5 flex -translate-y-1/2 items-center justify-center rounded-md p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .input-date-wrap input[type='date'] {
+      color-scheme: dark;
+    }
+
+    .input-date-btn {
+      @apply text-gray-300 hover:bg-gray-700 hover:text-white;
+    }
+  }
+
   .text-error {
     @apply text-sm text-red-600;
   }
