@@ -42,6 +42,20 @@ export class ExhibitionsService {
     return {};
   }
 
+  private buildSearchWhere(
+    q?: FilterExhibitionsDto['q'],
+  ): Prisma.ExhibitionWhereInput {
+    const term = q?.trim();
+    if (!term) return {};
+    return {
+      OR: [
+        { title: { contains: term, mode: 'insensitive' } },
+        { venueName: { contains: term, mode: 'insensitive' } },
+        { area: { contains: term, mode: 'insensitive' } },
+      ],
+    };
+  }
+
   async generateDescriptionForAdmin(id: number) {
     const exhibition = await this.findOneForAdmin(id);
     const description =
@@ -50,12 +64,13 @@ export class ExhibitionsService {
   }
 
   async findAll(dto: FilterExhibitionsDto = {}) {
-    const { area, status } = dto;
+    const { area, status, q } = dto;
     return this.prisma.exhibition.findMany({
       where: {
         isVisible: true,
         ...(area ? { area } : {}),
         ...this.buildStatusWhere(status),
+        ...this.buildSearchWhere(q),
       },
       orderBy: {
         startDate: 'asc',

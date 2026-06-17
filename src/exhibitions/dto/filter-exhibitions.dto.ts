@@ -16,4 +16,9 @@ export class FilterExhibitionsDto {
   @IsOptional()
   @IsIn(EXHIBITION_LIST_STATUSES)
   status?: ExhibitionListStatus;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  q?: string;
 }

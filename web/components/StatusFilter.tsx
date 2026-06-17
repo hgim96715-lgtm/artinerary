@@ -11,13 +11,14 @@ const OPTIONS: { value?: ExhibitionListStatus; label: string }[] = [
 type Props={
     selectedStatus?: ExhibitionListStatus;
     selectedArea?: string;
+    selectedQ?:string;
 }
 
-export function StatusFilter({selectedStatus,selectedArea}:Props){
+export function StatusFilter({selectedStatus,selectedArea,selectedQ}:Props){
     return(
         <div className="flex flex-wrap gap-2">
             {OPTIONS.map(({value,label})=>(
-                <FilterChip key={label} as="link" href={buildExhibitionParams({area:selectedArea,status:value})} active={selectedStatus===value} tone="amber">
+                <FilterChip key={label} as="link" href={buildExhibitionParams({area:selectedArea,status:value,q:selectedQ})} active={selectedStatus===value} tone="amber">
                     {label}
                 </FilterChip>
             ))}

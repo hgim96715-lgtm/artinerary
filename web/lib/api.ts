@@ -30,10 +30,12 @@ export type ExhibitionAreaStat = { area: string; count: number };
 export function getExhibitions(
   area?: string,
   status?: ExhibitionListStatus,
+  q?: string,
 ): Promise<Exhibition[]> {
   const sp = new URLSearchParams();
   if (area) sp.set('area', area);
   if (status) sp.set('status', status);
+  if (q?.trim()) sp.set('q', q.trim());
   const qs = sp.toString();
   return fetchAPI<Exhibition[]>(`/exhibitions${qs ? `?${qs}` : ''}`);
 }
