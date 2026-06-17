@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { VisitModule } from './visit/visit.module';
 import { MeStatusModule } from './me-status/me-status.module';
+import { AdminModule } from './admin/admin.module';
 @Module({
   imports: [
     WinstonModule.forRoot({
@@ -43,6 +44,7 @@ import { MeStatusModule } from './me-status/me-status.module';
     WishlistModule,
     VisitModule,
     MeStatusModule,
+    AdminModule,
   ],
 })
 export class AppModule {}

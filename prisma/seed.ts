@@ -15,7 +15,10 @@ async function main() {
   const email = process.env[EnvKeys.ADMIN_EMAIL];
   const password = process.env[EnvKeys.ADMIN_PASSWORD];
   const nickname =
-    process.env[EnvKeys.ADMIN_NICKNAME] ?? email?.split('@')[0] ?? '관리자';
+    process.env[EnvKeys.ADMIN_NICKNAME]?.trim() ||
+    email?.split('@')[0] ||
+    '관리자';
+
   if (!email || !password) {
     throw new Error(
       `${EnvKeys.ADMIN_EMAIL} / ${EnvKeys.ADMIN_PASSWORD} 가 .env 에 필요합니다.`,

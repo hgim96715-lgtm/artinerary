@@ -2,6 +2,42 @@ import type { ExhibitionSource } from './types/exhibition';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
 
+export type AdminExhibitionActivity = {
+  date: string;
+  summary: {
+    signups: number;
+    wishlists: number;
+    reviews: number;
+    visits: number;
+  };
+  signups: {
+    id: number;
+    nickname: string;
+    createdAt: string;
+    email: string;
+  }[];
+  wishlists: {
+    id: number;
+    createdAt: string;
+    nickname: string;
+    userId: number;
+    exhibitionId: number;
+    exhibitionTitle: string;
+  }[];
+  visits: {
+    id: number;
+    createdAt: string;
+    updatedAt: string;
+    visitedAt: string;
+    note: string;
+    rating: number;
+    nickname: string;
+    userId: number;
+    exhibitionId: number;
+    exhibitionTitle: string;
+  }[];
+};
+
 async function adminFetchAPI<T>(
   endpoint: string,
   options?: RequestInit,
@@ -162,4 +198,11 @@ export function generateExhibitionDescription(
       method: 'POST',
     },
   );
+}
+
+/* Admin Activity */
+export function adminTodayActivity(): Promise<AdminExhibitionActivity> {
+  return adminFetchAPI<AdminExhibitionActivity>('/admin/activity/today', {
+    method: 'GET',
+  });
 }

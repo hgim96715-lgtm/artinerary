@@ -1,20 +1,17 @@
 'use client';
 
+import { AdminExhibitionCard } from '@/components/AdminExhibitionCard';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { FilterChip } from '@/components/FilterChip';
-import { SourceBadge } from '@/components/SourceBadge';
-import { VisibleBadge } from '@/components/VisibleBadge';
 import {
   adminCollect,
   type AdminExhibitionRow,
   adminExhibitions,
-  adminLogout,
-  adminMe,
   type CollectResult,
   deleteExhibition,
 } from '@/lib/admin-api';
 import { formatExhibitionTitle } from '@/lib/format';
-import { DownloadIcon, Loader2, PlusIcon, TrashIcon } from 'lucide-react';
+import { DownloadIcon, Loader2, PlusIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -25,7 +22,6 @@ type SourceFilter = 'all' | 'manual' | 'api';
 export default function AdminExhibitionsPage() {
   const router = useRouter();
   const [rows, setRows] = useState<AdminExhibitionRow[]>([]);
-  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
@@ -38,16 +34,12 @@ export default function AdminExhibitionsPage() {
   const [collecting, setCollecting] = useState(false);
   const [collectResult, setCollectResult] = useState<CollectResult | null>(null);
   const [collectConfirmOpen, setCollectConfirmOpen] = useState(false);
-  const [nickname,setNickname]=useState('');
-
+  
   useEffect(() => {
     async function loadAdminPage() {
       setLoading(true);
       setError('');
       try {
-        const me = await adminMe();
-        setEmail(me.email);
-        setNickname(me.nickname);
         setRows(await adminExhibitions());
       } catch (err: unknown) {
         if (err instanceof Error) {
@@ -83,14 +75,6 @@ export default function AdminExhibitionsPage() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [collectConfirmOpen, collecting]);
 
-  async function onLogout() {
-    try {
-      await adminLogout();
-    } finally {
-      router.replace('/login');
-      router.refresh();
-    }
-  }
 
   async function onDelete() {
     if (!deleteTarget) return;
@@ -144,14 +128,8 @@ export default function AdminExhibitionsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="page-title">{nickname? `${nickname} 관리자님의 관리창` : '전시 관리'}</h1>
-        <div className="flex items-center gap-3 text-sm">
-          {email && <span>{email}</span>}
-          <button type="button" onClick={onLogout} className="link-action">
-            로그아웃
-          </button>
-        </div>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <h1 className="page-title">전시 목록</h1>
       </div>
 
       {error && <p className="text-error">{error}</p>}
@@ -281,40 +259,16 @@ export default function AdminExhibitionsPage() {
                     : '등록된 전시가 없습니다.'}
         </p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="exhibition-grid">
           {filteredRows.map((row) => (
-            <li
-              key={row.id}
-              className="flex items-center justify-between rounded border px-3 py-2"
-            >
-              <div>
-                <p className="font-medium">{formatExhibitionTitle(row.title)}</p>
-                <p className="text-muted flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                  <span>{row.venueName ?? '장소 없음'}</span>
-                  <span aria-hidden="true">·</span>
-                  <span>{row.area ?? '지역 없음'}</span>
-                  <span aria-hidden="true">·</span>
-                  <SourceBadge source={row.source} />
-                  <span aria-hidden="true">·</span>
-                  <VisibleBadge isVisible={row.isVisible} />
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Link
-                  href={`/admin/exhibitions/${row.id}/edit`}
-                  className="link-action"
-                >
-                  수정
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setDeleteTarget(row)}
-                  className="btn-danger"
-                  aria-label={`${formatExhibitionTitle(row.title)} 삭제`}
-                >
-                  <TrashIcon className="size-4" aria-hidden="true" />
-                </button>
-              </div>
+            <li key={row.id}>
+              <AdminExhibitionCard
+                row={row}
+                onDelete={(id) =>
+                  setDeleteTarget(rows.find((r) => r.id === id) ?? null)
+                }
+                disabled={collecting || deleting}
+              />
             </li>
           ))}
         </ul>

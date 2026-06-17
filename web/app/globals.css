@@ -577,3 +577,14 @@ body {
     color: inherit;
   }
 }
+
+/* 종료중은 회색으로 처리 */
+.exhibition-book-mini-page--ended {
+    @apply border-gray-500/20 bg-gray-200;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .exhibition-book-mini-page--ended {
+      @apply border-gray-700/20 bg-gray-700;
+    }
+  }
