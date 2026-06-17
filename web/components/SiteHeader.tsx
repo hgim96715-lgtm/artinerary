@@ -1,6 +1,7 @@
 'use client';
 
 import { logout, me, type AuthUser } from '@/lib/auth-api';
+import { LogOutIcon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -39,7 +40,7 @@ export function SiteHeader() {
           Artinerary
         </Link>
         {!isAdminArea && (
-          <nav className="flex items-center gap-1 text-sm sm:gap-2">
+          <nav className="flex items-center gap-1 text-sm ">
             {loading ? null : user ? (
               <>
                 {user.role === 'USER'? (
@@ -57,9 +58,10 @@ export function SiteHeader() {
                 <button
                   type="button"
                   onClick={onLogout}
-                  className="nav-auth-link"
+                  className="nav-auth-link ml-2 flex items-center gap-1"
                 >
-                  로그아웃
+                로그아웃
+                <LogOutIcon className="size-4" aria-hidden="true" />
                 </button>
               </>
             ) : (
