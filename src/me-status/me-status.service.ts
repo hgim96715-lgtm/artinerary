@@ -25,6 +25,7 @@ export class MeStatusService {
           note: true,
           rating: true,
           isPublic: true,
+          photoUrl: true,
         },
       }),
     ]);
@@ -38,6 +39,7 @@ export class MeStatusService {
             note: visit.note,
             rating: visit.rating,
             isPublic: visit.isPublic,
+            photoUrl: visit.photoUrl,
           }
         : null,
     };

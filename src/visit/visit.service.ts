@@ -20,6 +20,7 @@ export type UpsertVisitInput = {
   note?: string | null;
   rating?: number | null;
   isPublic?: boolean;
+  photoUrl?: string | null;
 };
 
 export type UpdateVisitInput = {
@@ -27,6 +28,7 @@ export type UpdateVisitInput = {
   note?: string | null;
   rating?: number | null;
   isPublic?: boolean;
+  photoUrl?: string | null;
 };
 
 @Injectable()
@@ -52,6 +54,7 @@ export class VisitService {
       note: row.note,
       rating: row.rating,
       isPublic: row.isPublic,
+      photoUrl: row.photoUrl,
       ...row.exhibition,
     }));
   }
@@ -82,12 +85,16 @@ export class VisitService {
           note: input.note ?? null,
           rating: input.rating ?? null,
           isPublic: input.isPublic ?? false,
+          photoUrl: input.photoUrl?.trim() || null,
         },
         update: {
           visitedAt,
           ...(input.note !== undefined ? { note: input.note } : {}),
           ...(input.rating !== undefined ? { rating: input.rating } : {}),
           ...(input.isPublic !== undefined ? { isPublic: input.isPublic } : {}),
+          ...(input.photoUrl !== undefined
+            ? { photoUrl: input.photoUrl?.trim() || null }
+            : {}),
         },
       });
       await tx.wishlist.deleteMany({
@@ -122,6 +129,9 @@ export class VisitService {
         ...(input.note !== undefined ? { note: input.note } : {}),
         ...(input.rating !== undefined ? { rating: input.rating } : {}),
         ...(input.isPublic !== undefined ? { isPublic: input.isPublic } : {}),
+        ...(input.photoUrl !== undefined
+          ? { photoUrl: input.photoUrl?.trim() || null }
+          : {}),
       },
     });
     return {

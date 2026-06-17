@@ -28,4 +28,8 @@ export class UpsertVisitDto {
   @IsOptional()
   @IsBoolean()
   isPublic?: boolean;
+
+  @IsOptional()
+  @IsString()
+  photoUrl?: string;
 }

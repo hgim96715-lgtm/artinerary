@@ -22,4 +22,10 @@ export const envValidationSchema = Joi.object({
   [EnvKeys.ADMIN_NICKNAME]: Joi.string(),
   [EnvKeys.FRONTEND_URL]: Joi.string().uri().optional(),
   [EnvKeys.ANTHROPIC_API_KEY]: Joi.string().optional(),
+  [EnvKeys.S3_ACCOUNT_ID]: Joi.string().optional(),
+  [EnvKeys.S3_ACCESS_KEY_ID]: Joi.string().optional(),
+  [EnvKeys.S3_SECRET_ACCESS_KEY]: Joi.string().optional(),
+  [EnvKeys.S3_BUCKET]: Joi.string().optional(),
+  [EnvKeys.S3_ENDPOINT]: Joi.string().optional(),
+  [EnvKeys.S3_PUBLIC_URL]: Joi.string().uri().optional(),
 });

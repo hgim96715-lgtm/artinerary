@@ -12,6 +12,7 @@ import { VisitModule } from './visit/visit.module';
 import { MeStatusModule } from './me-status/me-status.module';
 import { AdminModule } from './admin/admin.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { UploadModule } from './upload/upload.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -47,6 +48,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     VisitModule,
     MeStatusModule,
     AdminModule,
+    UploadModule,
   ],
 })
 export class AppModule {}
