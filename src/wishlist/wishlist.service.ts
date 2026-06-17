@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from 'generated/prisma/client';
+import { buildActiveWishlistExhibitionWhere } from './wishlist-exhibition.filter';
 
 const exhibitionSelect = {
   id: true,
@@ -22,7 +23,7 @@ export class WishlistService {
 
   async findMine(userId: number) {
     const rows = await this.prisma.wishlist.findMany({
-      where: { userId, exhibition: { isVisible: true } },
+      where: { userId, exhibition: buildActiveWishlistExhibitionWhere() },
       orderBy: { createdAt: 'desc' },
       include: {
         exhibition: { select: exhibitionSelect },
@@ -36,7 +37,7 @@ export class WishlistService {
 
   async addWishlist(userId: number, exhibitionId: number) {
     const exhibition = await this.prisma.exhibition.findFirst({
-      where: { id: exhibitionId, isVisible: true },
+      where: { id: exhibitionId, ...buildActiveWishlistExhibitionWhere() },
       select: { id: true },
     });
     if (!exhibition) {

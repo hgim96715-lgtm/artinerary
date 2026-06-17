@@ -11,8 +11,10 @@ import { WishlistModule } from './wishlist/wishlist.module';
 import { VisitModule } from './visit/visit.module';
 import { MeStatusModule } from './me-status/me-status.module';
 import { AdminModule } from './admin/admin.module';
+import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     WinstonModule.forRoot({
       level: 'debug',
       transports: [

@@ -6,10 +6,11 @@ import {
   MeWishlistController,
 } from './wishlist.controller';
 import { WishlistService } from './wishlist.service';
+import { WishlistCleanupService } from './wishlist-cleanup.service';
 
 @Module({
   imports: [PrismaModule, AuthModule],
   controllers: [MeWishlistController, ExhibitionWishlistController],
-  providers: [WishlistService],
+  providers: [WishlistService, WishlistCleanupService],
 })
 export class WishlistModule {}
