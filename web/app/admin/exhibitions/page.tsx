@@ -259,14 +259,18 @@ export default function AdminExhibitionsPage() {
                     : '등록된 전시가 없습니다.'}
         </p>
       ) : (
-        <ul className="exhibition-grid">
+        <ul
+          className={`exhibition-grid ${collecting ? 'opacity-60' : ''}`}
+          aria-busy={collecting}
+        >
           {filteredRows.map((row) => (
             <li key={row.id}>
               <AdminExhibitionCard
                 row={row}
-                onDelete={(id) =>
-                  setDeleteTarget(rows.find((r) => r.id === id) ?? null)
-                }
+                onDelete={(id) => {
+                  if (collecting || deleting) return;
+                  setDeleteTarget(rows.find((r) => r.id === id) ?? null);
+                }}
                 disabled={collecting || deleting}
               />
             </li>

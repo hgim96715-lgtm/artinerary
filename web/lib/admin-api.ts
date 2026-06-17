@@ -9,6 +9,7 @@ export type AdminExhibitionActivity = {
     wishlists: number;
     reviews: number;
     visits: number;
+    exhibitionEdits: number;
   };
   signups: {
     id: number;
@@ -36,6 +37,27 @@ export type AdminExhibitionActivity = {
     exhibitionId: number;
     exhibitionTitle: string;
   }[];
+  exhibitionEdits: {
+    id: number;
+    title: string;
+    source: ExhibitionSource;
+    isVisible: boolean;
+    updatedAt: string;
+  }[];
+};
+
+export type AdminUserRow = {
+  id: number;
+  nickname: string;
+  email: string;
+  createdAt: string;
+  wishlistCount: number;
+  visitCount: number;
+};
+
+export type AdminUsersResponse = {
+  total: number;
+  users: AdminUserRow[];
 };
 
 async function adminFetchAPI<T>(
@@ -203,6 +225,13 @@ export function generateExhibitionDescription(
 /* Admin Activity */
 export function adminTodayActivity(): Promise<AdminExhibitionActivity> {
   return adminFetchAPI<AdminExhibitionActivity>('/admin/activity/today', {
+    method: 'GET',
+  });
+}
+
+/* Admin Users */
+export function adminUsers(): Promise<AdminUsersResponse> {
+  return adminFetchAPI<AdminUsersResponse>('/admin/users', {
     method: 'GET',
   });
 }

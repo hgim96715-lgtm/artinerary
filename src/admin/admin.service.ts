@@ -17,12 +17,40 @@ const getTodayRangeKst = () => {
 export class AdminService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async listUsers() {
+    const users = await this.prisma.user.findMany({
+      where: { role: Role.USER },
+      select: {
+        id: true,
+        nickname: true,
+        email: true,
+        createdAt: true,
+        _count: {
+          select: { wishlists: true, visitRecords: true },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return {
+      total: users.length,
+      users: users.map((u) => ({
+        id: u.id,
+        nickname: u.nickname,
+        email: u.email,
+        createdAt: u.createdAt,
+        wishlistCount: u._count.wishlists,
+        visitCount: u._count.visitRecords,
+      })),
+    };
+  }
+
   async getTodayActivity() {
     const { date, start, end } = getTodayRangeKst();
-    const [signups, wishlists, visits] = await Promise.all([
+    const [signups, wishlists, visits, exhibitionEdits] = await Promise.all([
       this.prisma.user.findMany({
         where: { role: Role.USER, createdAt: { gte: start, lte: end } },
-        select: { id: true, nickname: true, createdAt: true },
+        select: { id: true, nickname: true, email: true, createdAt: true },
         orderBy: { createdAt: 'desc' },
       }),
       this.prisma.wishlist.findMany({
@@ -50,6 +78,19 @@ export class AdminService {
         },
         orderBy: { createdAt: 'desc' },
       }),
+      this.prisma.exhibition.findMany({
+        where: {
+          updatedAt: { gte: start, lte: end },
+        },
+        select: {
+          id: true,
+          title: true,
+          source: true,
+          isVisible: true,
+          updatedAt: true,
+        },
+        orderBy: { updatedAt: 'desc' },
+      }),
     ]);
     const reviews = visits.filter((v) => v.note?.trim());
     return {
@@ -59,6 +100,7 @@ export class AdminService {
         wishlists: wishlists.length,
         reviews: reviews.length,
         visits: visits.length,
+        exhibitionEdits: exhibitionEdits.length,
       },
       signups,
       wishlists: wishlists.map((w) => ({
@@ -80,6 +122,13 @@ export class AdminService {
         userId: v.user.id,
         exhibitionId: v.exhibition.id,
         exhibitionTitle: v.exhibition.title,
+      })),
+      exhibitionEdits: exhibitionEdits.map((e) => ({
+        id: e.id,
+        title: e.title,
+        source: e.source,
+        isVisible: e.isVisible,
+        updatedAt: e.updatedAt,
       })),
     };
   }

@@ -31,7 +31,11 @@ export const AdminExhibitionCard = ({
         : 'ended';
 
   return (
-    <article className="exhibition-book-mini flex h-full flex-col">
+    <article
+      className={`exhibition-book-mini flex h-full flex-col ${
+        disabled ? 'pointer-events-none opacity-50' : ''
+      }`}
+    >
       <div className={`exhibition-book-mini-page !mt-0 relative flex flex-1 flex-col overflow-hidden ${isEnded ? 'exhibition-book-mini-page--ended' : ''}`}>
         <span
           className={`exhibition-book-mini-ribbon exhibition-book-mini-ribbon--${ribbonClass} !top-0 !right-0 rounded-none rounded-bl-md`}

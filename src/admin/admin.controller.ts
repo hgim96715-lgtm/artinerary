@@ -14,4 +14,8 @@ export class AdminController {
   getTodayActivity() {
     return this.adminService.getTodayActivity();
   }
+  @Get('users')
+  listUsers() {
+    return this.adminService.listUsers();
+  }
 }

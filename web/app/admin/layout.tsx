@@ -67,6 +67,7 @@ const AdminLayout=({children}:Props)=>{
             <div className="flex flex-wrap gap-2">
                 <FilterChip as="link" href="/admin/exhibitions" active={pathname.startsWith('/admin/exhibitions')}>전시 목록</FilterChip>
                 <FilterChip as="link" href="/admin/activity" active={pathname.startsWith('/admin/activity')}>사용자의 오늘 활동</FilterChip>
+                <FilterChip as="link" href="/admin/users" active={pathname.startsWith('/admin/users')}>회원 목록</FilterChip>
             </div>
             {children}
         </div>
