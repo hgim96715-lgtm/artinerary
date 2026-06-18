@@ -1,8 +1,10 @@
 'use client';
 
+import { buildLoginHref } from '@/lib/login-redirect';
 import { addWishlist, removeWishlist } from '@/lib/wishlist-api';
 import { ArrowRight, Heart } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 type Props = {
@@ -12,20 +14,18 @@ type Props = {
   onWishlistChange: (next: boolean) => void;
 };
 
-/**
- * 찜 버튼 — ExhibitionUserActions가 me-status로 상태를 주입
- * 클릭 시 addWishlist / removeWishlist → onWishlistChange로 부모 state 갱신
- */
-export function WishlistButton({
+/** 찜 버튼 — ExhibitionUserActions가 me-status로 상태 주입 */
+export const WishlistButton = ({
   exhibitionId,
   canUse,
   wishlisted,
   onWishlistChange,
-}: Props) {
+}: Props) => {
+  const pathname = usePathname();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  async function onToggleWishlist() {
+  const onToggleWishlist = async () => {
     if (!canUse || submitting) return;
     setSubmitting(true);
     setError('');
@@ -46,16 +46,16 @@ export function WishlistButton({
     } finally {
       setSubmitting(false);
     }
-  }
+  };
 
   if (!canUse) {
     return (
       <p className="text-sm text-muted">
-        <Link href="/login" className="link-action">
+        <Link href={buildLoginHref(pathname)} className="link-action">
           로그인
         </Link>{' '}
         하면 찜 기능을 사용할 수 있습니다
-        <ArrowRight />
+        <ArrowRight className="inline size-4" aria-hidden />
       </p>
     );
   }
@@ -75,7 +75,7 @@ export function WishlistButton({
         />
         {wishlisted ? '찜 취소' : '찜 하기'}
       </button>
-      {error && <p className="text-error">{error}</p>}
+      {error ? <p className="text-error">{error}</p> : null}
     </div>
   );
-}
+};

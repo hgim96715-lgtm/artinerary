@@ -1,12 +1,15 @@
 'use client';
 
 import { login } from '@/lib/auth-api';
+import { resolveLoginRedirect } from '@/lib/login-redirect';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useState } from 'react';
 
-export default function LoginPage() {
+const LoginForm = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const from = searchParams.get('from');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -18,11 +21,7 @@ export default function LoginPage() {
     setSubmitting(true);
     try {
       const user = await login(email, password);
-      if (user.role === 'ADMIN') {
-        router.push('/admin/exhibitions');
-      } else {
-        router.push('/');
-      }
+      router.push(resolveLoginRedirect(from, user.role));
       router.refresh();
     } catch (err: unknown) {
       if (err instanceof Error && err.message === '인증에 실패했습니다.') {
@@ -90,5 +89,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+};
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<p className="text-muted">불러오는 중…</p>}>
+      <LoginForm />
+    </Suspense>
   );
 }
