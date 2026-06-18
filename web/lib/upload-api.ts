@@ -1,4 +1,4 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
+import { getApiBaseUrl } from '@/lib/api-base';
 
 export type UploadVisitPhotoResponse = {
   url: string;
@@ -10,7 +10,7 @@ export const uploadVisitPhoto = async (
   const form = new FormData();
   form.append('file', file);
 
-  const res = await fetch(`${BASE_URL}/uploads/visit-photo`, {
+  const res = await fetch(`${getApiBaseUrl()}/uploads/visit-photo`, {
     method: 'POST',
     credentials: 'include',
     body: form,

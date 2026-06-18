@@ -1,13 +1,12 @@
+import { getApiBaseUrl } from '@/lib/api-base';
 import { ExhibitionListStatus } from './exhibition-list-params';
 import { Exhibition, ExhibitionDetailResponse } from './types/exhibition';
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
 
 async function fetchAPI<T>(
   endpoint: string,
   options?: RequestInit,
 ): Promise<T> {
-  const res = await fetch(`${BASE_URL}${endpoint}`, {
+  const res = await fetch(`${getApiBaseUrl()}${endpoint}`, {
     headers: {
       'Content-Type': 'application/json',
       ...options?.headers,

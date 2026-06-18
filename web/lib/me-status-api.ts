@@ -1,4 +1,4 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
+import { getApiBaseUrl } from '@/lib/api-base';
 
 export type ExhibitionVisitHistory = {
   visitId: number;
@@ -15,7 +15,7 @@ export type ExhibitionMeStatus = {
 };
 
 async function meStatusFetchAPI<T>(endpoint: string): Promise<T> {
-  const res = await fetch(`${BASE_URL}${endpoint}`, {
+  const res = await fetch(`${getApiBaseUrl()}${endpoint}`, {
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',

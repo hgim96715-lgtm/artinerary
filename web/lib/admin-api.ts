@@ -1,6 +1,5 @@
+import { getApiBaseUrl } from '@/lib/api-base';
 import type { ExhibitionSource } from './types/exhibition';
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
 
 export type AdminExhibitionActivity = {
   date: string;
@@ -64,7 +63,7 @@ async function adminFetchAPI<T>(
   endpoint: string,
   options?: RequestInit,
 ): Promise<T> {
-  const res = await fetch(`${BASE_URL}${endpoint}`, {
+  const res = await fetch(`${getApiBaseUrl()}${endpoint}`, {
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
