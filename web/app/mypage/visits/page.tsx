@@ -11,13 +11,15 @@ export default function MyPageVisitsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const onRemoveVisit=(visitId:number)=>{
-    setVisits((prev)=>prev.filter((visit)=>visit.id !== visitId));
-  }
+  const onRemoveVisit = (visitId: number) => {
+    setVisits((prev) => prev.filter((v) => v.visitId !== visitId));
+  };
 
-  const onUpdateVisit=(visitId:number,next:VisitItem)=>{
-    setVisits((prev)=>prev.map((visit)=>visit.id === visitId ? next : visit));
-  }
+  const onUpdateVisit = (visitId: number, next: VisitItem) => {
+    setVisits((prev) =>
+      prev.map((v) => (v.visitId === visitId ? next : v)),
+    );
+  };
 
   useEffect(() => {
     const load = async () => {

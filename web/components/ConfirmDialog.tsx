@@ -27,7 +27,7 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
   confirmClassName = 'btn-danger',
-  cancelClassName = 'btn-ghost',
+  cancelClassName = 'btn-secondary',
 }: ConfirmDialogProps) {
   if (!open) return null;
 
