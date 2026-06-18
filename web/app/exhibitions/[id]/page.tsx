@@ -1,3 +1,4 @@
+import { ExhibitionBackLink } from '@/components/ExhibitionBackLink';
 import { ExhibitionDetailMeta } from '@/components/ExhibitionDetailMeta';
 import { ExhibitionUserActions } from '@/components/ExhibitionUserActions';
 import { getExhibition } from '@/lib/api';
@@ -10,10 +11,11 @@ import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-type Props = { params: Promise<{ id: string }> };
+type Props = { params: Promise<{ id: string }>; searchParams: Promise<{ from?: string }>; };
 
-export default async function ExhibitionsDetailPage({ params }: Props) {
+export default async function ExhibitionsDetailPage({ params, searchParams }: Props) {
   const { id } = await params;
+  const { from } = await searchParams;
   const exhibition = await getExhibition(id);
   if (!exhibition) {
     notFound();
@@ -26,10 +28,7 @@ export default async function ExhibitionsDetailPage({ params }: Props) {
 
   return (
     <article className="exhibition-detail">
-      <Link href="/exhibitions" className="link-back">
-        <ArrowLeft />
-        <span>전시 목록 보기</span>
-      </Link>
+      <ExhibitionBackLink from={from} />
 
       <div className="exhibition-book">
         <div className="exhibition-book-cover-wrap">

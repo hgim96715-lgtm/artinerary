@@ -1,6 +1,7 @@
 'use client';
 
 import { logout, me, type AuthUser } from '@/lib/auth-api';
+import { getLastMypagePath, rememberMypagePath } from '@/lib/return-path';
 import { LogOutIcon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -13,6 +14,17 @@ export function SiteHeader() {
   const [loading, setLoading] = useState(true);
 
   const isAdminArea = pathname.startsWith('/admin');
+
+  const [mypageHref,setMypageHref]=useState('/mypage/wishlist');
+
+  useEffect(()=>{
+    if(pathname.startsWith('/mypage/')){
+      rememberMypagePath(pathname);
+      setMypageHref(pathname);
+    }else{
+      setMypageHref(getLastMypagePath());
+    }
+  },[pathname]);
 
   useEffect(() => {
     setLoading(true);
@@ -44,7 +56,7 @@ export function SiteHeader() {
             {loading ? null : user ? (
               <>
                 {user.role === 'USER'? (
-                  <Link href="/mypage" className="nav-auth-link px-2">
+                  <Link href={mypageHref} className="nav-auth-link px-2">
                     {user.nickname}님
                   </Link>
                 ):(

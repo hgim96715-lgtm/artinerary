@@ -6,9 +6,11 @@ import {
   getExhibitionStatus,
   getPlace,
 } from '@/lib/format';
+import { buildExhibitionHref } from '@/lib/return-path';
 import { removeWishlist, type WishlistItem } from '@/lib/wishlist-api';
 import { Heart } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useState, type KeyboardEvent, type MouseEvent } from 'react';
 
 type Props = {
@@ -21,6 +23,7 @@ const formatWishlistedAt = (iso: string) => {
 };
 
 export const WishlistRecordCard = ({ item, onRemove }: Props) => {
+  const pathname = usePathname();
   const [flipped, setFlipped] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -153,7 +156,7 @@ export const WishlistRecordCard = ({ item, onRemove }: Props) => {
 
           <div className="visit-ticket-back-footer">
             <Link
-              href={`/exhibitions/${item.id}`}
+              href={buildExhibitionHref(item.id,pathname)}
               className="visit-ticket-back-link"
               onClick={(e) => e.stopPropagation()}
             >

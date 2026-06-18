@@ -5,6 +5,8 @@ import type { VisitItem } from '@/lib/visit-api';
 import { CalendarDays, Star } from 'lucide-react';
 import Link from 'next/link';
 import { useState, type KeyboardEvent } from 'react';
+import { usePathname } from 'next/navigation';
+import { buildExhibitionHref } from '@/lib/return-path';
 
 type Props = {
   visit: VisitItem;
@@ -43,6 +45,7 @@ const StarRating = ({ rating }: { rating: number }) => {
 };
 
 export const VisitRecordCard = ({ visit }: Props) => {
+  const pathname = usePathname();
   const [flipped, setFlipped] = useState(false);
   const place = getPlace({ ...visit, address: null });
   const title = formatExhibitionTitle(visit.title);
@@ -139,7 +142,7 @@ export const VisitRecordCard = ({ visit }: Props) => {
           {visit.canOpenDetail ? (
             <div className="visit-ticket-back-footer">
               <Link
-                href={`/exhibitions/${visit.id}`}
+                href={buildExhibitionHref(visit.id,pathname)}
                 className="visit-ticket-back-link"
                 onClick={(e) => e.stopPropagation()}
               >
