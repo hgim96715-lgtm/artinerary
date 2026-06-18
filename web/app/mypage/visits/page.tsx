@@ -47,7 +47,7 @@ export default function MyPageVisitsPage() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold">관람 기록</h2>
+      <h2 className="text-lg font-bold text-amber-950 dark:text-amber-50">관람 기록</h2>
 
       {visits.length === 0 ? (
         <div className="space-y-2">

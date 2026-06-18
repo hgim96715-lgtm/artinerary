@@ -16,7 +16,7 @@ export default async function Home() {
           <div className="min-w-0 space-y-0.5">
             <time
               dateTime={formatTodayISO()}
-              className="block text-sm font-medium text-rose-400/90"
+              className="block text-sm font-medium text-sky-400/90"
             >
               {formatToday()}
             </time>

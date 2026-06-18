@@ -158,7 +158,7 @@ export const VisitRecordCard = ({ visit, onUpdate, onDelete }: Props) => {
                 <div className="visit-ticket-back-thumb-placeholder">{title}</div>
               )}
               <span className="visit-ticket-back-date-badge">
-                <CalendarDays className="size-3 text-rose-400" aria-hidden />
+                <CalendarDays className="size-3 text-sky-400" aria-hidden />
                 관람 {visitedLabel}
               </span>
             </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { logout, me, type AuthUser } from '@/lib/auth-api';
+import { AUTH_USER_UPDATED_EVENT } from '@/lib/auth-user-sync';
 import { getLastMypagePath, rememberMypagePath } from '@/lib/return-path';
 import { LogOutIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -34,6 +35,14 @@ export function SiteHeader() {
       .catch(() => setUser(null))
       .finally(() => setLoading(false));
   }, [pathname]);
+
+  useEffect(() => {
+    const onUserUpdated = (e: Event) => {
+      setUser((e as CustomEvent<AuthUser>).detail);
+    };
+    window.addEventListener(AUTH_USER_UPDATED_EVENT, onUserUpdated);
+    return () => window.removeEventListener(AUTH_USER_UPDATED_EVENT, onUserUpdated);
+  }, []);
 
   async function onLogout() {
     try {

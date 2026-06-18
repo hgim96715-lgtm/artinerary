@@ -62,7 +62,7 @@ export function ExhibitionUserActions({exhibitionId}:Props){
                     <p>
                         <span className="font-medium text-foreground text-muted">관람기록</span> - 일반 회원만 사용할 수 있습니다.
                     </p>
-                    <p className="text-xs text-rose-500/80">
+                    <p className="text-xs text-sky-500/80">
                         관리자 계정으로는 이용할 수 없어요.
                         일반 회원으로 로그인해주세요.
                     </p>

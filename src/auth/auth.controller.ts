@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Patch,
   Post,
   Req,
   Res,
@@ -15,6 +16,8 @@ import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { JwtPayload } from './strategy/jwt.strategy';
 import { SignupDto } from './dto/signup.dto';
+import { UpdateNicknameDto } from './dto/update-nickname.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -40,5 +43,23 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   me(@Req() req: { user: JwtPayload }) {
     return this.authService.me(req.user);
+  }
+
+  @Patch('me')
+  @UseGuards(JwtAuthGuard)
+  updateNickname(
+    @Req() req: { user: JwtPayload },
+    @Body() dto: UpdateNicknameDto,
+  ) {
+    return this.authService.updateNickname(req.user.sub, dto);
+  }
+
+  @Patch('me/password')
+  @UseGuards(JwtAuthGuard)
+  changePassword(
+    @Req() req: { user: JwtPayload },
+    @Body() dto: ChangePasswordDto,
+  ) {
+    return this.authService.changePassword(req.user.sub, dto);
   }
 }

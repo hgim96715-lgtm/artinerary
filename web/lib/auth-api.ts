@@ -1,4 +1,26 @@
 import { getApiBaseUrl } from '@/lib/api-base';
+import { notifyAuthUserUpdated } from '@/lib/auth-user-sync';
+
+const parseErrorMessage = async (res: Response): Promise<string> => {
+  let message = '요청에 실패했습니다.';
+  try {
+    const body = (await res.json()) as {
+      message?: string | string[];
+    };
+    if (Array.isArray(body.message)) {
+      message = body.message.join(', ');
+    } else if (typeof body.message === 'string') {
+      message = body.message;
+    }
+  } catch {
+    if (res.status === 400) {
+      message = '입력값을 확인해 주세요.';
+    } else if (res.status === 401 || res.status === 403) {
+      message = '인증에 실패했습니다.';
+    }
+  }
+  return message;
+};
 
 async function authFetchAPI<T>(
   endpoint: string,
@@ -12,26 +34,8 @@ async function authFetchAPI<T>(
     },
     ...options,
   });
-  if (res.status === 401 || res.status === 403) {
-    throw new Error('인증에 실패했습니다.');
-  }
   if (!res.ok) {
-    let message = '요청에 실패했습니다.';
-    try {
-      const body = (await res.json()) as {
-        message?: string | string[];
-      };
-      if (Array.isArray(body.message)) {
-        message = body.message.join(', ');
-      } else if (typeof body.message === 'string') {
-        message = body.message;
-      }
-    } catch {
-      if (res.status === 400) {
-        message = '입력값을 확인해 주세요.';
-      }
-    }
-    throw new Error(message);
+    throw new Error(await parseErrorMessage(res));
   }
   return res.json();
 }
@@ -74,3 +78,24 @@ export function me(): Promise<AuthUser> {
     method: 'GET',
   });
 }
+
+export const updateNickname = async (
+  nickname: string,
+): Promise<{ message: string } & AuthUser> => {
+  const result = await authFetchAPI<{ message: string } & AuthUser>('/auth/me', {
+    method: 'PATCH',
+    body: JSON.stringify({ nickname }),
+  });
+  notifyAuthUserUpdated(result);
+  return result;
+};
+
+export const changePassword = (
+  currentPassword: string,
+  newPassword: string,
+): Promise<{ message: string }> => {
+  return authFetchAPI('/auth/me/password', {
+    method: 'PATCH',
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+};

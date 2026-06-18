@@ -243,7 +243,7 @@ export const VisitRecordEditDialog = ({
               }}
               className={`flex min-h-28 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-4 text-center text-sm transition-colors ${
                 dragOver
-                  ? 'border-rose-400 bg-rose-50'
+                  ? 'border-sky-400 bg-sky-50'
                   : 'border-gray-300 bg-gray-50 hover:border-gray-400'
               }`}
             >

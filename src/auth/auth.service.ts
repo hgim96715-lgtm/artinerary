@@ -13,6 +13,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { JwtPayload } from './strategy/jwt.strategy';
 import { SignupDto } from './dto/signup.dto';
+import { UpdateNicknameDto } from './dto/update-nickname.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -120,5 +122,47 @@ export class AuthService {
       throw new UnauthorizedException('사용자를 찾을 수 없습니다.');
     }
     return user;
+  }
+
+  async updateNickname(userId: number, dto: UpdateNicknameDto) {
+    const taken = await this.prisma.user.findFirst({
+      where: { nickname: dto.nickname, NOT: { id: userId } },
+      select: { id: true },
+    });
+    if (taken) {
+      throw new ConflictException('이미 존재하는 닉네임입니다.');
+    }
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: { nickname: dto.nickname },
+      select: { email: true, nickname: true, role: true },
+    });
+
+    return {
+      message: '닉네임이 변경되었습니다.',
+      ...user,
+    };
+  }
+
+  async changePassword(userId: number, dto: ChangePasswordDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { passwordHash: true },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('사용자를 찾을 수 없습니다.');
+    }
+    const ok = await bcrypt.compare(dto.currentPassword, user.passwordHash);
+    if (!ok) {
+      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+    }
+    const saltRounds = 10;
+    const passwordHash = await bcrypt.hash(dto.newPassword, saltRounds);
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash },
+    });
+    return { message: '비밀번호가 변경되었습니다.' };
   }
 }

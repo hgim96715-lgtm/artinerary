@@ -59,7 +59,7 @@ export const AreaExhibitionChart = ({
                     aria-hidden
                   >
                     <div
-                      className="w-full rounded-t-lg bg-gradient-to-t from-rose-400 to-amber-300 transition-all group-hover:from-rose-500 group-hover:to-amber-400"
+                      className="w-full rounded-t-lg bg-gradient-to-t from-sky-400 to-emerald-300 transition-all group-hover:from-sky-500 group-hover:to-emerald-400"
                       style={{
                         height,
                         minHeight: count > 0 ? '0.375rem' : undefined,

@@ -102,7 +102,7 @@ export const WeatherByLocation = () => {
       <div className="flex items-center justify-between gap-3">
         <h2 className="exhibition-book-intro-title !mb-0">오늘의 날씨</h2>
         <div className="flex min-w-0 items-center gap-1.5 text-xs text-muted">
-          <MapPin className="size-3.5 shrink-0 text-rose-400" aria-hidden />
+          <MapPin className="size-3.5 shrink-0 text-sky-400" aria-hidden />
           <span className="truncate font-medium">
             {weather.location ?? '내 위치'}
           </span>
@@ -112,34 +112,34 @@ export const WeatherByLocation = () => {
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-start gap-2">
           <Thermometer
-            className="mt-2 size-4 shrink-0 text-rose-400/80"
+            className="mt-2 size-4 shrink-0 text-sky-400/80"
             aria-hidden
           />
           <div className="flex items-start gap-0.5">
             <span className="text-5xl font-bold tabular-nums tracking-tight">
               {Math.round(weather.temp)}
             </span>
-            <span className="mt-2 text-lg text-gray-500 dark:text-amber-50/60">
+            <span className="mt-2 text-lg text-gray-500 dark:text-slate-400">
               °C
             </span>
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-1 rounded-2xl bg-amber-900/5 px-4 py-3 dark:bg-amber-100/5">
+        <div className="flex flex-col items-center gap-1 rounded-2xl bg-sky-500/5 px-4 py-3 dark:bg-sky-400/10">
           <WeatherIcon category={weather.category} className="size-9" />
           <span className="text-sm font-semibold">{weather.label}</span>
         </div>
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-900/10 bg-white/60 px-3 py-1 text-xs dark:border-amber-100/10 dark:bg-black/20">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-200/60 bg-white/60 px-3 py-1 text-xs dark:border-sky-500/20 dark:bg-sky-950/30">
           <Droplets className="size-3.5 text-sky-500" aria-hidden />
           습도 {weather.humidity}%
         </span>
       </div>
 
       {tip ? (
-        <p className="mt-auto rounded-xl border border-rose-300/40 bg-gradient-to-r from-rose-50 to-amber-50 px-4 py-2.5 text-sm font-medium text-rose-900/90 dark:border-rose-400/20 dark:from-rose-950/40 dark:to-amber-950/30 dark:text-rose-100/90">
+        <p className="mt-auto rounded-xl border border-sky-300/40 bg-gradient-to-r from-sky-50 to-emerald-50 px-4 py-2.5 text-sm font-medium text-sky-900/90 dark:border-sky-400/20 dark:from-sky-950/40 dark:to-emerald-950/30 dark:text-sky-100/90">
           {tip}
         </p>
       ) : null}
