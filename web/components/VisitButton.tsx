@@ -1,11 +1,9 @@
 'use client';
 
 import { ExhibitionVisitHistory } from '@/lib/me-status-api';
-import { buildLoginHref } from '@/lib/login-redirect';
 import { upsertVisit } from '@/lib/visit-api';
 import { ArrowRight, Star } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { useState,useRef } from 'react';
 import { uploadVisitPhoto } from '@/lib/upload-api';
 
@@ -30,7 +28,6 @@ export function VisitButton({
   visit,
   onVisitChange,
 }: Props) {
-  const pathname = usePathname();
   const [submitting, setSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
   const [visitedAt, setVisitedAt] = useState('');
@@ -176,7 +173,7 @@ export function VisitButton({
   if (!canUse) {
     return (
       <p className="text-sm text-muted">
-        <Link href={buildLoginHref(pathname)} className="link-action">
+        <Link href="/login" className="link-action">
           로그인
         </Link>{' '}
         하면 방문 관람 기록을 남길 수 있습니다.

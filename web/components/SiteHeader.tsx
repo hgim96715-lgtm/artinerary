@@ -1,7 +1,6 @@
 'use client';
 
 import { logout, me, type AuthUser } from '@/lib/auth-api';
-import { buildLoginHref } from '@/lib/login-redirect';
 import { LogOutIcon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -71,7 +70,7 @@ export function SiteHeader() {
                   회원가입
                 </Link>
                 <span className="nav-auth-divider" aria-hidden="true" />
-                <Link href={buildLoginHref(pathname)} className="nav-auth-link nav-auth-link--primary">
+                <Link href="/login" className="nav-auth-link nav-auth-link--primary">
                   로그인
                 </Link>
               </>
