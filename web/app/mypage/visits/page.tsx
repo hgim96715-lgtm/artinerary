@@ -11,6 +11,14 @@ export default function MyPageVisitsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const onRemoveVisit=(visitId:number)=>{
+    setVisits((prev)=>prev.filter((visit)=>visit.id !== visitId));
+  }
+
+  const onUpdateVisit=(visitId:number,next:VisitItem)=>{
+    setVisits((prev)=>prev.map((visit)=>visit.id === visitId ? next : visit));
+  }
+
   useEffect(() => {
     const load = async () => {
       setLoading(true);
@@ -51,7 +59,7 @@ export default function MyPageVisitsPage() {
         <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           {visits.map((visit) => (
             <li key={visit.visitId}>
-              <VisitRecordCard visit={visit} />
+              <VisitRecordCard visit={visit} onUpdate={onUpdateVisit} onDelete={onRemoveVisit} />
             </li>
           ))}
         </ul>

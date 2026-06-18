@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { buildVisitExhibitionMeta } from './visit-exhibition.meta';
 
 const exhibitionSelect = {
   id: true,
@@ -42,10 +43,10 @@ export class VisitService {
 
   async findMine(userId: number) {
     const rows = await this.prisma.visitRecord.findMany({
-      where: { userId, exhibition: { isVisible: true } },
+      where: { userId },
       orderBy: { visitedAt: 'desc' },
       include: {
-        exhibition: { select: exhibitionSelect },
+        exhibition: { select: { ...exhibitionSelect, isVisible: true } },
       },
     });
     return rows.map((row) => ({
@@ -56,6 +57,11 @@ export class VisitService {
       isPublic: row.isPublic,
       photoUrl: row.photoUrl,
       ...row.exhibition,
+      endDate: row.exhibition.endDate,
+      ...buildVisitExhibitionMeta({
+        isVisible: row.exhibition.isVisible,
+        endDate: row.exhibition.endDate,
+      }),
     }));
   }
 

@@ -50,6 +50,9 @@ export type VisitItem = {
   startDate: string;
   endDate: string;
   photoUrl?: string | null;
+  isExhibitionVisible: boolean;
+  isEnded: boolean;
+  canOpenDetail: boolean;
 };
 
 export type UpsertVisitBody = {
@@ -73,3 +76,23 @@ export function upsertVisit(
     body: JSON.stringify(body),
   });
 }
+
+/** 마이페이지 관람 카드 수정·삭제  */
+export const updateVisit = (
+  visitId: number,
+  body: UpsertVisitBody,
+): Promise<{ message: string; visitId: number }> => {
+  return visitFetchAPI(`/visits/${visitId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(body),
+  });
+};
+
+/** 관람 기록 삭제 — 전시 종료·비공개여도 row는 유지하다가, 유저가 직접 지울 때만 호출 */
+export const deleteVisit = (
+  visitId: number,
+): Promise<{ message: string; visitId: number }> => {
+  return visitFetchAPI(`/visits/${visitId}`, {
+    method: 'DELETE',
+  });
+};
