@@ -1,5 +1,6 @@
 'use client';
 
+import { VisitCalendar } from '@/components/VisitCalendar';
 import { me, type AuthUser } from '@/lib/auth-api';
 import { AUTH_USER_UPDATED_EVENT } from '@/lib/auth-user-sync';
 import {
@@ -12,7 +13,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState, type ReactNode } from 'react';
+import { Suspense, useEffect, useState, type ReactNode } from 'react';
 
 type Props = {
   children: ReactNode;
@@ -117,6 +118,9 @@ const MyPageLayout = ({ children }: Props) => {
               );
             })}
           </ul>
+          <Suspense fallback={null}>
+            <VisitCalendar />
+          </Suspense>
         </nav>
 
         <div className="min-w-0 flex-1 rounded-2xl border border-sky-200/40 bg-white p-5 shadow-md ring-1 ring-sky-100/60 sm:p-6 dark:border-sky-500/20 dark:bg-[var(--surface)] dark:ring-sky-900/30">
