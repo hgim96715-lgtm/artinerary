@@ -9,7 +9,7 @@ import {
 import { removeWishlist, type WishlistItem } from '@/lib/wishlist-api';
 import { Heart } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, type KeyboardEvent, type MouseEvent } from 'react';
 
 type Props = {
   item: WishlistItem;
@@ -28,17 +28,18 @@ export const WishlistRecordCard = ({ item, onRemove }: Props) => {
   const place = getPlace({ ...item, address: null });
   const title = formatExhibitionTitle(item.title);
   const status = getExhibitionStatus(item.startDate, item.endDate);
+  const wishlistedLabel = formatWishlistedAt(item.wishlistedAt);
 
   const onFlip = () => setFlipped((v) => !v);
 
-  const onFlipKeyDown = (e: React.KeyboardEvent) => {
+  const onFlipKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       onFlip();
     }
   };
 
-  const onRemoveWishlist = async (e: React.MouseEvent) => {
+  const onRemoveWishlist = async (e: MouseEvent) => {
     e.stopPropagation();
     if (submitting) return;
     setSubmitting(true);
@@ -53,13 +54,21 @@ export const WishlistRecordCard = ({ item, onRemove }: Props) => {
     }
   };
 
+  const poster = item.imageUrl ? (
+    <img src={item.imageUrl} alt="" />
+  ) : (
+    <div className="flex h-full items-center justify-center p-4 text-center text-sm font-medium text-gray-500">
+      {title}
+    </div>
+  );
+
   return (
     <div className="visit-ticket">
       <div
         className={`visit-ticket-inner ${flipped ? 'visit-ticket-inner--flipped' : ''}`}
       >
         <div
-          className="visit-ticket-face visit-ticket-front cursor-pointer"
+          className="visit-ticket-face visit-ticket-front visit-ticket-flip"
           onClick={onFlip}
           onKeyDown={onFlipKeyDown}
           role="button"
@@ -70,20 +79,12 @@ export const WishlistRecordCard = ({ item, onRemove }: Props) => {
           aria-pressed={flipped}
         >
           <div className="visit-ticket-poster">
-            {item.imageUrl ? (
-              <img src={item.imageUrl} alt="" />
-            ) : (
-              <div className="flex h-full items-center justify-center p-4 text-center text-sm font-medium text-gray-500">
-                {title}
-              </div>
-            )}
-          </div>
-          <p className="visit-ticket-date flex items-center justify-center gap-1.5">
+            {poster}
             <button
               type="button"
               onClick={onRemoveWishlist}
               disabled={submitting}
-              className="inline-flex shrink-0 disabled:opacity-50"
+              className="wishlist-card-heart"
               aria-label="찜 해제"
             >
               <Heart
@@ -94,45 +95,71 @@ export const WishlistRecordCard = ({ item, onRemove }: Props) => {
                 }`}
               />
             </button>
-            <span className="line-clamp-1">{place ?? '장소 정보 없음'}</span>
-          </p>
-          {error && (
+            <span
+              className={`absolute left-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-semibold shadow-sm ${status.color}`}
+            >
+              {status.label}
+            </span>
+          </div>
+          <div className="wishlist-card-caption">
+            <p
+              className={
+                place
+                  ? 'wishlist-card-caption-primary line-clamp-1'
+                  : 'wishlist-card-caption-primary line-clamp-2'
+              }
+            >
+              {place ?? title}
+            </p>
+            <p className="wishlist-card-caption-secondary line-clamp-1">
+              {formatDateRange(item.startDate, item.endDate)}
+            </p>
+          </div>
+          {error ? (
             <p className="text-error px-2 pb-1 text-center text-xs">{error}</p>
-          )}
+          ) : null}
         </div>
 
         <div
-          className="visit-ticket-face visit-ticket-back cursor-pointer"
+          className="visit-ticket-face visit-ticket-back visit-ticket-flip"
           onClick={onFlip}
           onKeyDown={onFlipKeyDown}
           role="button"
           tabIndex={0}
           aria-label={`${title} 찜 카드 닫기`}
         >
-          <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-hidden text-center">
+          <div className="visit-ticket-back-thumb">
+            {poster}
+            <span className="wishlist-card-badge">
+              <Heart className="size-3 fill-red-500 text-red-500" aria-hidden />
+              찜 {wishlistedLabel}
+            </span>
+          </div>
+
+          <div className="visit-ticket-back-body">
             <span
               className={`mx-auto inline-block rounded-full px-2 py-0.5 text-xs ${status.color}`}
             >
               {status.label}
             </span>
-            <h2 className="line-clamp-2 text-sm font-semibold leading-snug">
-              {title}
-            </h2>
-            {place && <p className="line-clamp-1 text-xs text-muted">{place}</p>}
-            <p className="text-xs leading-relaxed text-gray-700">
+            <h2 className="visit-ticket-back-title">{title}</h2>
+            {place ? (
+              <p className="visit-ticket-back-place">{place}</p>
+            ) : null}
+            <p className="text-[11px] text-gray-600">
               {formatDateRange(item.startDate, item.endDate)}
             </p>
-            <p className="text-xs text-muted">
-              찜한 날 {formatWishlistedAt(item.wishlistedAt)}
-            </p>
           </div>
-          <Link
-            href={`/exhibitions/${item.id}`}
-            className="link-action mt-3 block text-center text-xs"
-            onClick={(e) => e.stopPropagation()}
-          >
-            전시 상세 보기
-          </Link>
+
+          <div className="visit-ticket-back-footer">
+            <Link
+              href={`/exhibitions/${item.id}`}
+              className="visit-ticket-back-link"
+              onClick={(e) => e.stopPropagation()}
+            >
+              전시 상세 보기 →
+            </Link>
+          </div>
         </div>
       </div>
     </div>

@@ -253,6 +253,16 @@ body {
   }
 
   /* 관람 기록 — 티켓 플립 카드 (mypage) */
+  .mypage-record-grid {
+    @apply grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4;
+  }
+
+  @media (max-width: 380px) {
+    .mypage-record-grid {
+      @apply grid-cols-1;
+    }
+  }
+
   .visit-ticket {
     @apply w-full cursor-pointer border-0 bg-transparent p-0 text-left;
     perspective: 1000px;
@@ -272,23 +282,31 @@ body {
   .visit-ticket-face {
     @apply absolute inset-0 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm;
     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
   }
 
   .visit-ticket-front {
-    @apply relative flex flex-col;
+    @apply flex flex-col;
+    transform: translateZ(1px);
   }
 
   .visit-ticket-back {
-    transform: rotateY(180deg);
-    @apply flex flex-col overflow-hidden bg-gradient-to-b from-rose-50/90 via-white to-amber-50/40 p-0 text-gray-900;
+    transform: rotateY(180deg) translateZ(1px);
+    @apply grid overflow-hidden bg-gradient-to-b from-rose-50/90 via-white to-amber-50/40 p-0 text-gray-900;
+    grid-template-rows: minmax(4.5rem, 28%) minmax(0, 1fr) auto;
+  }
+
+  .visit-ticket-inner--flipped .visit-ticket-stamp {
+    @apply invisible opacity-0;
   }
 
   .visit-ticket-back-thumb {
-    @apply relative h-[36%] min-h-[5rem] shrink-0 bg-gray-100;
+    @apply relative min-h-0 shrink-0 bg-gray-100;
   }
 
+  .visit-ticket-poster img,
   .visit-ticket-back-thumb img {
-    @apply h-full w-full object-cover;
+    @apply h-full w-full object-contain;
   }
 
   .visit-ticket-back-thumb-placeholder {
@@ -300,27 +318,36 @@ body {
   }
 
   .visit-ticket-back-body {
-    @apply flex min-h-0 flex-1 flex-col gap-1.5 px-3 py-2.5 text-center;
+    @apply flex min-h-0 flex-col gap-1 overflow-hidden px-3 py-2 text-center;
+  }
+
+  .visit-ticket-back-meta {
+    @apply flex shrink-0 flex-col gap-0.5;
   }
 
   .visit-ticket-back-title {
-    @apply line-clamp-2 text-sm font-bold leading-snug text-gray-900;
+    @apply line-clamp-1 overflow-hidden text-xs font-bold leading-snug text-gray-900;
   }
 
   .visit-ticket-back-place {
-    @apply line-clamp-1 text-[11px] text-gray-600;
+    @apply line-clamp-1 overflow-hidden text-[10px] text-gray-600;
+  }
+
+  .visit-ticket-back-note-wrap {
+    @apply min-h-[3.25rem] flex-1 overflow-hidden;
   }
 
   .visit-ticket-back-note {
-    @apply line-clamp-3 rounded-lg bg-white/80 px-2 py-1.5 text-left text-[11px] leading-relaxed text-gray-700 ring-1 ring-amber-100/80;
+    @apply h-full overflow-y-auto overscroll-contain rounded-lg bg-white/90 px-2 py-1.5 text-left text-[11px] leading-[1.45] text-gray-700 ring-1 ring-amber-100/80;
+    -webkit-overflow-scrolling: touch;
   }
 
   .visit-ticket-back-note-empty {
-    @apply text-[11px] text-gray-400;
+    @apply flex flex-1 items-center justify-center text-[11px] text-gray-400;
   }
 
   .visit-ticket-back-footer {
-    @apply shrink-0 px-3 pb-3 pt-1;
+    @apply shrink-0 px-3 pb-2.5 pt-1;
   }
 
   .visit-ticket-back-link {
@@ -332,11 +359,7 @@ body {
   }
 
   .visit-ticket-poster {
-    @apply relative min-h-0 flex-1 bg-gray-100;
-  }
-
-  .visit-ticket-poster img {
-    @apply h-full w-full object-fill;
+    @apply relative min-h-0 flex-1 overflow-hidden bg-gray-100;
   }
 
   .visit-ticket-date {
@@ -344,22 +367,16 @@ body {
   }
 
   .visit-ticket-stamp {
-    @apply pointer-events-none absolute bottom-3 right-1.5 z-10 flex h-14 w-14 rotate-[-14deg] items-center justify-center rounded-full border-2 border-dashed px-1 text-center text-[10px] font-bold leading-tight tracking-tight transition-[bottom,width,height,font-size] duration-200;
-  }
-
-  @container visit-ticket (max-width: 10.5rem) {
-    .visit-ticket-stamp {
-      @apply bottom-7 right-1.5 h-12 w-12 text-[9px];
-    }
-
-    .visit-ticket-date {
-      @apply py-2 text-xs;
-    }
+    @apply pointer-events-none absolute bottom-2 right-2 z-10 flex h-12 w-12 rotate-[-12deg] items-center justify-center rounded-full border-2 border-dashed px-1 text-center text-[9px] font-bold leading-tight tracking-tight;
   }
 
   @container visit-ticket (max-width: 11.5rem) {
     .visit-ticket-stamp {
-      @apply bottom-9 h-10 w-10 border text-[8px];
+      @apply bottom-1.5 right-1.5 h-10 w-10 text-[8px];
+    }
+
+    .visit-ticket-date {
+      @apply py-2 text-xs;
     }
   }
 
@@ -369,6 +386,29 @@ body {
 
   .visit-ticket-stamp--done-completed {
     @apply border-gray-300 bg-gray-50/95 text-gray-500;
+  }
+
+  /* 찜 카드 — 하트 버튼 · 뒷면 뱃지 */
+  .wishlist-card-heart {
+    @apply absolute top-2 right-2 z-10 flex size-8 items-center justify-center rounded-full bg-white/95 shadow-sm ring-1 ring-gray-200/80 backdrop-blur-sm transition-colors disabled:opacity-50;
+  }
+
+  .wishlist-card-badge {
+    @apply absolute bottom-2 left-1/2 inline-flex -translate-x-1/2 items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold text-rose-600 shadow-sm ring-1 ring-rose-100/80 backdrop-blur-sm;
+  }
+
+  .wishlist-card-caption {
+    @apply flex shrink-0 flex-col justify-center gap-0.5 overflow-hidden border-t border-dashed border-gray-200 bg-white px-3 py-2.5 text-center;
+    min-height: 2.75rem;
+    max-height: 3.25rem;
+  }
+
+  .wishlist-card-caption-primary {
+    @apply overflow-hidden text-xs font-semibold leading-snug text-gray-800;
+  }
+
+  .wishlist-card-caption-secondary {
+    @apply overflow-hidden text-[10px] leading-tight text-gray-500;
   }
 
   /* 공개 전시 — 책 형식 카드 */

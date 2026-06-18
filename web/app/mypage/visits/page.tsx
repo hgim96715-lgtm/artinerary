@@ -56,7 +56,7 @@ export default function MyPageVisitsPage() {
           </Link>
         </div>
       ) : (
-        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+        <ul className="mypage-record-grid">
           {visits.map((visit) => (
             <li key={visit.visitId}>
               <VisitRecordCard visit={visit} onUpdate={onUpdateVisit} onDelete={onRemoveVisit} />

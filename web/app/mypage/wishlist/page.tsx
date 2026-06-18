@@ -52,7 +52,7 @@ export default function MyPageWishlistPage() {
           </Link>
         </div>
       ) : (
-        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+        <ul className="mypage-record-grid">
           {items.map((item) => (
             <li key={item.id}>
               <WishlistRecordCard item={item} onRemove={onRemoveWishlist} />

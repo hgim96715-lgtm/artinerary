@@ -4,7 +4,7 @@ import { formatExhibitionTitle, getPlace } from '@/lib/format';
 import type { VisitItem } from '@/lib/visit-api';
 import { CalendarDays, Star } from 'lucide-react';
 import Link from 'next/link';
-import { useState, type KeyboardEvent, type MouseEvent } from 'react';
+import { useState, type KeyboardEvent } from 'react';
 
 type Props = {
   visit: VisitItem;
@@ -59,11 +59,6 @@ export const VisitRecordCard = ({ visit }: Props) => {
     }
   };
 
-  const onFlipClick = (e: MouseEvent) => {
-    e.stopPropagation();
-    onFlip();
-  };
-
   return (
     <div className="visit-ticket">
       <div
@@ -88,25 +83,25 @@ export const VisitRecordCard = ({ visit }: Props) => {
                 {title}
               </div>
             )}
+            <span
+              className={`visit-ticket-stamp visit-ticket-stamp--${stamp.variant}`}
+              aria-hidden
+            >
+              {stamp.label}
+            </span>
           </div>
           <p className="visit-ticket-date">관람 {visitedLabel}</p>
-          <span
-            className={`visit-ticket-stamp visit-ticket-stamp--${stamp.variant}`}
-            aria-hidden
-          >
-            {stamp.label}
-          </span>
         </div>
 
-        <div className="visit-ticket-face visit-ticket-back">
-          <div
-            className="visit-ticket-back-thumb visit-ticket-flip"
-            onClick={onFlipClick}
-            onKeyDown={onFlipKeyDown}
-            role="button"
-            tabIndex={0}
-            aria-label={`${title} 관람 기록 닫기`}
-          >
+        <div
+          className="visit-ticket-face visit-ticket-back visit-ticket-flip"
+          onClick={onFlip}
+          onKeyDown={onFlipKeyDown}
+          role="button"
+          tabIndex={0}
+          aria-label={`${title} 관람 기록 닫기`}
+        >
+          <div className="visit-ticket-back-thumb">
             {posterSrc ? (
               <img src={posterSrc} alt="" />
             ) : (
@@ -118,21 +113,24 @@ export const VisitRecordCard = ({ visit }: Props) => {
             </span>
           </div>
 
-          <div
-            className="visit-ticket-back-body visit-ticket-flip"
-            onClick={onFlipClick}
-            onKeyDown={onFlipKeyDown}
-            role="button"
-            tabIndex={0}
-            aria-label={`${title} 관람 기록 닫기`}
-          >
-            <h2 className="visit-ticket-back-title">{title}</h2>
-            {place ? (
-              <p className="visit-ticket-back-place">{place}</p>
-            ) : null}
-            {visit.rating != null ? <StarRating rating={visit.rating} /> : null}
+          <div className="visit-ticket-back-body">
+            <div className="visit-ticket-back-meta">
+              <h2 className="visit-ticket-back-title">{title}</h2>
+              {place ? (
+                <p className="visit-ticket-back-place">{place}</p>
+              ) : null}
+              {visit.rating != null ? (
+                <StarRating rating={visit.rating} />
+              ) : null}
+            </div>
             {visit.note ? (
-              <p className="visit-ticket-back-note">{visit.note}</p>
+              <div
+                className="visit-ticket-back-note-wrap"
+                onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => e.stopPropagation()}
+              >
+                <p className="visit-ticket-back-note">{visit.note}</p>
+              </div>
             ) : (
               <p className="visit-ticket-back-note-empty">후기 없음</p>
             )}
