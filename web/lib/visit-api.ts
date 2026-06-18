@@ -4,14 +4,20 @@ async function visitFetchAPI<T>(
   endpoint: string,
   options?: RequestInit,
 ): Promise<T> {
-  const res = await fetch(`${getApiBaseUrl()}${endpoint}`, {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
-    ...options,
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${getApiBaseUrl()}${endpoint}`, {
+      credentials: 'include',
+      cache: 'no-store',
+      headers: {
+        'Content-Type': 'application/json',
+        ...options?.headers,
+      },
+      ...options,
+    });
+  } catch {
+    throw new Error('목록을 불러오지 못했습니다.');
+  }
   if (res.status === 401 || res.status === 403) {
     throw new Error('Unauthorized');
   }

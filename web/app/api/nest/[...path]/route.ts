@@ -14,7 +14,8 @@ const cookieBase = isProd
   ? 'Path=/; HttpOnly; Secure; SameSite=Lax'
   : 'Path=/; HttpOnly; SameSite=Lax';
 
-const hopByHop = new Set([
+/** upstream 요청에서 빼기 — accept-encoding 넣으면 압축·헤더 불일치로 iOS fetch 실패 */
+const requestHopByHop = new Set([
   'connection',
   'keep-alive',
   'proxy-authenticate',
@@ -25,7 +26,25 @@ const hopByHop = new Set([
   'upgrade',
   'host',
   'content-length',
+  'accept-encoding',
 ]);
+
+/** 브라우저로 넘길 때 빼기 — Node fetch가 이미 풀었는데 헤더만 남으면 Safari 디코딩 실패 */
+const responseHopByHop = new Set([
+  'connection',
+  'keep-alive',
+  'proxy-authenticate',
+  'proxy-authorization',
+  'te',
+  'trailers',
+  'transfer-encoding',
+  'upgrade',
+  'content-encoding',
+  'content-length',
+]);
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 const rewriteSetCookies = (upstream: Response, resHeaders: Headers) => {
   const rawCookies =
@@ -68,7 +87,7 @@ const proxy = async (
 
   const headers = new Headers();
   req.headers.forEach((value, key) => {
-    if (hopByHop.has(key.toLowerCase())) return;
+    if (requestHopByHop.has(key.toLowerCase())) return;
     headers.set(key, value);
   });
 
@@ -76,6 +95,7 @@ const proxy = async (
     method: req.method,
     headers,
     redirect: 'manual',
+    cache: 'no-store',
   };
 
   if (req.method !== 'GET' && req.method !== 'HEAD') {
@@ -83,16 +103,19 @@ const proxy = async (
   }
 
   const upstream = await fetch(url, init);
+  const body = await upstream.arrayBuffer();
 
   const resHeaders = new Headers();
   upstream.headers.forEach((value, key) => {
-    if (key.toLowerCase() === 'set-cookie') return;
+    const lower = key.toLowerCase();
+    if (lower === 'set-cookie') return;
+    if (responseHopByHop.has(lower)) return;
     resHeaders.set(key, value);
   });
 
   rewriteSetCookies(upstream, resHeaders);
 
-  return new NextResponse(upstream.body, {
+  return new NextResponse(body, {
     status: upstream.status,
     headers: resHeaders,
   });
