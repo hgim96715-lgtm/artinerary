@@ -84,6 +84,7 @@ const VisitMonthCaption = ({
   calendarMonth,
   bounds,
   onMonthChange,
+  displayIndex,
   className,
   ...rest
 }: VisitMonthCaptionProps) => {

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --background: #ffffff;
@@ -28,21 +29,19 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --accent: #38bdf8;
-    --accent-hover: #0ea5e9;
-    --accent-foreground: #0c1222;
-    --accent-link: #38bdf8;
-    --accent-link-hover: #7dd3fc;
-    --accent-ring: rgb(56 189 248 / 0.35);
-    --accent-border: rgb(56 189 248 / 0.45);
-    --surface: #151d28;
-    --surface-border: rgb(56 189 248 / 0.18);
-    --surface-muted: #1c2736;
-  }
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --accent: #38bdf8;
+  --accent-hover: #0ea5e9;
+  --accent-foreground: #0c1222;
+  --accent-link: #38bdf8;
+  --accent-link-hover: #7dd3fc;
+  --accent-ring: rgb(56 189 248 / 0.35);
+  --accent-border: rgb(56 189 248 / 0.45);
+  --surface: #151d28;
+  --surface-border: rgb(56 189 248 / 0.18);
+  --surface-muted: #1c2736;
 }
 
 body {
@@ -143,14 +142,12 @@ body {
     @apply absolute top-1/2 right-1.5 flex -translate-y-1/2 items-center justify-center rounded-md p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .input-date-wrap input[type='date'] {
-      color-scheme: dark;
-    }
+  .dark .input-date-wrap input[type='date'] {
+    color-scheme: dark;
+  }
 
-    .input-date-btn {
-      @apply text-gray-300 hover:bg-gray-700 hover:text-white;
-    }
+  .dark .input-date-btn {
+    @apply text-gray-300 hover:bg-gray-700 hover:text-white;
   }
 
   .text-error {
@@ -181,10 +178,8 @@ body {
     @apply w-full max-w-md space-y-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .auth-card {
-      @apply border-gray-800 bg-[#111];
-    }
+  .dark .auth-card {
+    @apply border-gray-800 bg-[#111];
   }
 
   .auth-card-header {
@@ -203,40 +198,32 @@ body {
     @apply border-t border-gray-100 pt-5 text-center text-sm text-gray-500;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .auth-card-footer {
-      @apply border-gray-800;
-    }
+  .dark .auth-card-footer {
+    @apply border-gray-800;
   }
 
   .nav-auth-link {
     @apply rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-foreground;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .nav-auth-link {
-      @apply text-gray-300 hover:bg-gray-800 hover:text-white;
-    }
+  .dark .nav-auth-link {
+    @apply text-gray-300 hover:bg-gray-800 hover:text-white;
   }
 
   .nav-auth-link--primary {
     @apply bg-black text-white hover:bg-black/90 hover:text-white;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .nav-auth-link--primary {
-      @apply bg-white text-black hover:bg-gray-200 hover:text-black;
-    }
+  .dark .nav-auth-link--primary {
+    @apply bg-white text-black hover:bg-gray-200 hover:text-black;
   }
 
   .nav-auth-divider {
     @apply mx-1 hidden h-4 w-px bg-gray-200 sm:block;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .nav-auth-divider {
-      @apply bg-gray-700;
-    }
+  .dark .nav-auth-divider {
+    @apply bg-gray-700;
   }
 
   .filter-chip {
@@ -478,31 +465,31 @@ body {
     @apply mt-2 rounded-lg border border-dashed border-amber-800/20 bg-[#fffaf3] px-3 py-2.5;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .exhibition-book-mini-page {
+  
+    .dark .exhibition-book-mini-page {
       @apply border-sky-500/15 bg-[var(--surface)];
     }
-  }
+  
 
   .exhibition-book-mini-title {
     @apply line-clamp-2 text-sm font-semibold leading-snug text-amber-950 group-hover:text-sky-700;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .exhibition-book-mini-title {
+  
+    .dark .exhibition-book-mini-title {
       @apply text-slate-100 group-hover:text-sky-300;
     }
-  }
+  
 
   .exhibition-book-mini-date {
     @apply mt-1 line-clamp-1 text-[11px] text-amber-900/60;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .exhibition-book-mini-date {
+  
+    .dark .exhibition-book-mini-date {
       @apply text-slate-400;
     }
-  }
+  
 
   .exhibition-grid {
     @apply grid gap-6 sm:grid-cols-2 lg:grid-cols-3;
@@ -525,11 +512,11 @@ body {
     background-color: #e8dcc8;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .exhibition-book-cover-wrap {
+  
+    .dark .exhibition-book-cover-wrap {
       background-color: #3d3428;
     }
-  }
+  
 
   .exhibition-book-cover {
     @apply relative overflow-hidden rounded-r-lg rounded-l-md border border-amber-900/20 shadow-lg;
@@ -573,8 +560,8 @@ body {
     );
   }
 
-  @media (prefers-color-scheme: dark) {
-    .exhibition-book-page {
+  
+    .dark .exhibition-book-page {
       @apply text-slate-100;
       background-color: var(--surface);
       background-image: linear-gradient(
@@ -583,7 +570,7 @@ body {
         transparent 14px
       );
     }
-  }
+  
 
   .exhibition-book-eyebrow {
     @apply text-[11px] font-medium uppercase tracking-[0.2em] text-sky-500/90;
@@ -594,21 +581,21 @@ body {
     font-family: Georgia, 'Times New Roman', serif;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .exhibition-book-title {
+  
+    .dark .exhibition-book-title {
       @apply text-slate-50;
     }
-  }
+  
 
   .exhibition-book-actions {
     @apply flex flex-wrap gap-3 rounded-xl border border-dashed border-sky-200 bg-sky-50/50 px-3 py-2.5 text-sm;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .exhibition-book-actions {
+  
+    .dark .exhibition-book-actions {
       @apply border-sky-200/20 bg-sky-950/20;
     }
-  }
+  
 
   .exhibition-book-facts {
     @apply space-y-2.5 text-sm;
@@ -618,41 +605,41 @@ body {
     @apply flex flex-col gap-1 rounded-lg border border-amber-900/10 bg-white/60 px-3 py-2.5 sm:flex-row sm:gap-3;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .exhibition-book-fact {
+  
+    .dark .exhibition-book-fact {
       @apply border-sky-500/15 bg-sky-950/20;
     }
-  }
+  
 
   .exhibition-book-fact-label {
     @apply inline-flex shrink-0 items-center gap-1 text-xs font-bold text-emerald-600/90 sm:w-14;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .exhibition-book-fact-label {
+  
+    .dark .exhibition-book-fact-label {
       @apply text-emerald-300/90;
     }
-  }
+  
 
   .exhibition-book-fact-value {
     @apply min-w-0 leading-snug text-amber-950/90;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .exhibition-book-fact-value {
+  
+    .dark .exhibition-book-fact-value {
       @apply text-slate-100/90;
     }
-  }
+  
 
   .exhibition-book-link {
     @apply font-medium text-sky-600 hover:text-sky-700 hover:underline;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .exhibition-book-link {
+  
+    .dark .exhibition-book-link {
       @apply text-sky-300 hover:text-sky-200;
     }
-  }
+  
 
   /* 책 아래 — 긴 소개 · 홈 패널 */
   .exhibition-book-intro {
@@ -665,8 +652,8 @@ body {
     );
   }
 
-  @media (prefers-color-scheme: dark) {
-    .exhibition-book-intro {
+  
+    .dark .exhibition-book-intro {
       @apply text-slate-100 shadow-lg shadow-black/25;
       background: linear-gradient(
         145deg,
@@ -674,7 +661,7 @@ body {
         color-mix(in srgb, var(--surface) 90%, #0c4a6e 10%) 100%
       );
     }
-  }
+  
 
   .exhibition-book-intro-title {
     @apply mb-3 text-xs font-bold tracking-[0.2em] text-sky-500/90 uppercase;
@@ -684,11 +671,11 @@ body {
     @apply text-slate-800/90;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .exhibition-book-intro-body {
+  
+    .dark .exhibition-book-intro-body {
       @apply text-slate-100/90;
     }
-  }
+  
 
   .dialog-overlay {
     @apply fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4;
@@ -732,46 +719,44 @@ body {
   font-size: 0.6875rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  .home-calendar.rdp-root {
+.dark .home-calendar.rdp-root {
     --rdp-accent-background-color: rgb(56 189 248 / 0.2);
     color: rgb(226 232 240 / 0.95);
   }
 
-  .home-calendar .rdp-weekday {
+.dark .home-calendar .rdp-weekday {
     color: rgb(148 163 184 / 0.75);
   }
 
-  .home-calendar .rdp-caption_label {
+.dark .home-calendar .rdp-caption_label {
     color: rgb(226 232 240 / 0.95);
   }
 
-  .home-calendar .rdp-chevron {
+.dark .home-calendar .rdp-chevron {
     fill: #38bdf8;
   }
 
-  .home-calendar .rdp-day_button {
+.dark .home-calendar .rdp-day_button {
     color: inherit;
   }
-}
 
 /* 종료중은 회색으로 처리 */
 .exhibition-book-mini-page--ended {
     @apply border-gray-500/20 bg-gray-200;
   }
   
-  @media (prefers-color-scheme: dark) {
-    .exhibition-book-mini-page--ended {
+  
+    .dark .exhibition-book-mini-page--ended {
       @apply border-gray-700/20 bg-gray-700;
     }
-  }
+  
 
   /* 마이페이지 — 관람 달력 (사이드바, 동그라미 없음) */
 .home-calendar.my-page-visit-calendar.rdp-root {
   max-width: none;
   margin-inline: 0;
   font-size: 0.75rem;
-  --rdp-today-color: #57b3ed;
+  --rdp-today-color: #0050b7;
   --rdp-selected-border: transparent;
   --rdp-day-height: 1.625rem;
   --rdp-day-width: 1.625rem;
@@ -858,31 +843,29 @@ body {
   color: rgb(30 41 59);
 }
 
-@media (prefers-color-scheme: dark) {
-  .visit-calendar-caption-btn {
+.dark .visit-calendar-caption-btn {
     color: rgb(226 232 240);
   }
 
-  .visit-calendar-caption-btn:hover {
+.dark .visit-calendar-caption-btn:hover {
     background-color: rgb(56 189 248 / 0.12);
     color: rgb(125 211 252);
   }
 
-  .visit-calendar-caption-panel {
+.dark .visit-calendar-caption-panel {
     border-color: rgb(56 189 248 / 0.25);
     box-shadow: 0 4px 14px rgb(0 0 0 / 0.35);
   }
 
-  .visit-calendar-caption-label {
+.dark .visit-calendar-caption-label {
     color: rgb(148 163 184);
   }
 
-  .visit-calendar-caption-select {
+.dark .visit-calendar-caption-select {
     border-color: rgb(56 189 248 / 0.2);
     background-color: rgb(15 23 42 / 0.6);
     color: rgb(226 232 240);
   }
-}
 
 .my-page-visit-calendar .rdp-month {
   width: 100%;
@@ -907,15 +890,26 @@ body {
   border-radius: 0.375rem;
 }
 
-/* 오늘 — 밝은 파란색 + 굵게 */
+/* 오늘 — 라이트 #0050b7 · 다크 밝은 스카이 */
 .my-page-visit-calendar .rdp-day.rdp-today:not(.rdp-selected) .rdp-day_button {
-  color: #38bdf8;
+  color: #0050b7;
   font-weight: 700;
   text-decoration: none;
 }
 
 .my-page-visit-calendar .rdp-day.rdp-today.visit-calendar-has-visit:not(.rdp-selected) .rdp-day_button {
-  color: #38bdf8;
+  color: #0050b7;
+  font-weight: 700;
+}
+
+.dark .my-page-visit-calendar .rdp-day.rdp-today:not(.rdp-selected) .rdp-day_button {
+  color: #7dd3fc;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.dark .my-page-visit-calendar .rdp-day.rdp-today.visit-calendar-has-visit:not(.rdp-selected) .rdp-day_button {
+  color: #7dd3fc;
   font-weight: 700;
 }
 
@@ -937,34 +931,25 @@ body {
   cursor: default;
 }
 
-@media (prefers-color-scheme: dark) {
-  .home-calendar.my-page-visit-calendar.rdp-root {
+.dark .home-calendar.my-page-visit-calendar.rdp-root {
     color: rgb(226 232 240);
+    --rdp-today-color: #7dd3fc;
   }
 
-  .my-page-visit-calendar .rdp-weekday {
+.dark .my-page-visit-calendar .rdp-weekday {
     color: rgb(148 163 184);
   }
 
-  .my-page-visit-calendar .rdp-caption_label {
+.dark .my-page-visit-calendar .rdp-caption_label {
     color: rgb(241 245 249);
   }
 
-  .my-page-visit-calendar .rdp-day_button:disabled {
+.dark .my-page-visit-calendar .rdp-day_button:disabled {
     color: rgb(148 163 184 / 0.55);
   }
 
-  .my-page-visit-calendar .rdp-day.visit-calendar-has-visit:not(.rdp-today):not(.rdp-selected) .rdp-day_button {
-    color: rgb(122, 206, 153);
-  }
-
-  .my-page-visit-calendar .rdp-day.rdp-today:not(.rdp-selected) .rdp-day_button {
-    color: #7dd3fc;
-  }
-
-  .my-page-visit-calendar .rdp-day.rdp-today.visit-calendar-has-visit:not(.rdp-selected) .rdp-day_button {
-    color: #7dd3fc;
-  }
+.dark .my-page-visit-calendar .rdp-day.visit-calendar-has-visit:not(.rdp-today):not(.rdp-selected) .rdp-day_button {
+  color: rgb(122, 206, 153);
 }
 
 .my-page-visit-calendar .rdp-day.visit-calendar-has-visit .rdp-day_button:not(:disabled) {
