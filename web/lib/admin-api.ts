@@ -240,3 +240,81 @@ export function adminUsers(): Promise<AdminUsersResponse> {
     method: 'GET',
   });
 }
+
+/* Admin Notices */
+
+export type AdminNoticeListItem = {
+  id: number;
+  title: string;
+  isPublished: boolean;
+  isPinned: boolean;
+  publishedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AdminNoticeDetail = {
+  id: number;
+  title: string;
+  body: string;
+  isPublished: boolean;
+  isPinned: boolean;
+  publishedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CreateNoticeBody = {
+  title: string;
+  body: string;
+  isPublished?: boolean;
+  isPinned?: boolean;
+  publishedAt?: string;
+};
+
+export type UpdateNoticeBody = Partial<CreateNoticeBody>;
+
+export const adminNotices = (): Promise<AdminNoticeListItem[]> => {
+  return adminFetchAPI<AdminNoticeListItem[]>('/admin/notices', {
+    method: 'GET',
+  });
+};
+
+export const adminNotice = (id: number): Promise<AdminNoticeDetail> => {
+  return adminFetchAPI<AdminNoticeDetail>(`/admin/notices/${id}`, {
+    method: 'GET',
+  });
+};
+
+export const createNotice = (
+  body: CreateNoticeBody,
+): Promise<{ message: string; id: number }> => {
+  return adminFetchAPI<{ message: string; id: number }>('/admin/notices', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+};
+
+export const patchNotice = (
+  id: number,
+  body: UpdateNoticeBody,
+): Promise<{ message: string; id: number }> => {
+  return adminFetchAPI<{ message: string; id: number }>(
+    `/admin/notices/${id}`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    },
+  );
+};
+
+export const deleteNotice = (
+  id: number,
+): Promise<{ message: string; id: number }> => {
+  return adminFetchAPI<{ message: string; id: number }>(
+    `/admin/notices/${id}`,
+    {
+      method: 'DELETE',
+    },
+  );
+};

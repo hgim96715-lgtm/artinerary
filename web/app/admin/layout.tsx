@@ -19,7 +19,8 @@ const AdminLayout=({children}:Props)=>{
 
     const isLoginRoute=pathname==='/admin/login';
     const showAdminTabs=
-        pathname==='/admin/exhibitions'||
+        pathname.startsWith('/admin/exhibitions')||
+        pathname.startsWith('/admin/notices')||
         pathname==='/admin/activity'||
         pathname==='/admin/users';
 
@@ -70,7 +71,8 @@ const AdminLayout=({children}:Props)=>{
             </div>
             {showAdminTabs && (
                 <div className="flex flex-wrap gap-2">
-                    <FilterChip as="link" href="/admin/exhibitions" active={pathname==='/admin/exhibitions'}>전시 목록</FilterChip>
+                    <FilterChip as="link" href="/admin/exhibitions" active={pathname.startsWith('/admin/exhibitions')}>전시 목록</FilterChip>
+                    <FilterChip as="link" href="/admin/notices" active={pathname.startsWith('/admin/notices')}>공지 목록</FilterChip>
                     <FilterChip as="link" href="/admin/activity" active={pathname==='/admin/activity'}>사용자의 오늘 활동</FilterChip>
                     <FilterChip as="link" href="/admin/users" active={pathname==='/admin/users'}>회원 목록</FilterChip>
                 </div>

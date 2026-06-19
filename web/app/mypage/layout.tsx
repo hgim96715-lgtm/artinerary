@@ -6,7 +6,6 @@ import { AUTH_USER_UPDATED_EVENT } from '@/lib/auth-user-sync';
 import {
   Megaphone,
   Heart,
-  HelpCircle,
   ScrollText,
   Settings,
   type LucideIcon,
@@ -28,7 +27,6 @@ const NAV_ITEMS: {
   { href: '/mypage/visits', label: '관람 기록', icon: ScrollText },
   { href: '/mypage/settings', label: '내 정보', icon: Settings },
   { href: '/mypage/notices', label: '공지사항', icon: Megaphone },
-  { href: '/mypage/support', label: '고객센터', icon: HelpCircle },
 ];
 
 const isNavActive = (pathname: string, href: string) =>
@@ -95,7 +93,7 @@ const MyPageLayout = ({ children }: Props) => {
           <span className="text-sky-600 dark:text-sky-300">{nickname}</span>님
         </h1>
         <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-          찜 · 관람 · 계정 · 공지 · 고객센터
+          찜 · 관람 · 계정 · 공지
         </p>
       </header>
 
