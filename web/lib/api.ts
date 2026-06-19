@@ -7,12 +7,12 @@ async function fetchAPI<T>(
   options?: RequestInit,
 ): Promise<T> {
   const res = await fetch(`${getApiBaseUrl()}${endpoint}`, {
+    ...options,
     headers: {
       'Content-Type': 'application/json',
       ...options?.headers,
       'Cache-Control': 'no-store',
     },
-    ...options,
   });
   if (res.status === 404) {
     return null as unknown as T;

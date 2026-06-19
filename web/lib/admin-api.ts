@@ -64,12 +64,13 @@ async function adminFetchAPI<T>(
   options?: RequestInit,
 ): Promise<T> {
   const res = await fetch(`${getApiBaseUrl()}${endpoint}`, {
+    ...options,
     credentials: 'include',
+    cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
       ...options?.headers,
     },
-    ...options,
   });
   if (res.status === 401 || res.status === 403) {
     throw new Error('Unauthorized');

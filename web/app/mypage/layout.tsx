@@ -4,7 +4,7 @@ import { VisitCalendar } from '@/components/VisitCalendar';
 import { me, type AuthUser } from '@/lib/auth-api';
 import { AUTH_USER_UPDATED_EVENT } from '@/lib/auth-user-sync';
 import {
-  Bell,
+  Megaphone,
   Heart,
   HelpCircle,
   ScrollText,
@@ -27,7 +27,7 @@ const NAV_ITEMS: {
   { href: '/mypage/wishlist', label: '찜한 전시', icon: Heart },
   { href: '/mypage/visits', label: '관람 기록', icon: ScrollText },
   { href: '/mypage/settings', label: '내 정보', icon: Settings },
-  { href: '/mypage/notices', label: '공지사항', icon: Bell },
+  { href: '/mypage/notices', label: '공지사항', icon: Megaphone },
   { href: '/mypage/support', label: '고객센터', icon: HelpCircle },
 ];
 

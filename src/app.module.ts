@@ -13,6 +13,7 @@ import { MeStatusModule } from './me-status/me-status.module';
 import { AdminModule } from './admin/admin.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { UploadModule } from './upload/upload.module';
+import { NoticeModule } from './notice/notice.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -49,6 +50,7 @@ import { UploadModule } from './upload/upload.module';
     MeStatusModule,
     AdminModule,
     UploadModule,
+    NoticeModule,
   ],
 })
 export class AppModule {}

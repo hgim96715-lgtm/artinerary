@@ -7,13 +7,13 @@ async function wishlistFetchAPI<T>(
   let res: Response;
   try {
     res = await fetch(`${getApiBaseUrl()}${endpoint}`, {
+      ...options,
       credentials: 'include',
       cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
         ...options?.headers,
       },
-      ...options,
     });
   } catch {
     throw new Error('목록을 불러오지 못했습니다.');

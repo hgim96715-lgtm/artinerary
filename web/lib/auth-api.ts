@@ -27,12 +27,12 @@ async function authFetchAPI<T>(
   options?: RequestInit,
 ): Promise<T> {
   const res = await fetch(`${getApiBaseUrl()}${endpoint}`, {
+    ...options,
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       ...options?.headers,
     },
-    ...options,
   });
   if (!res.ok) {
     throw new Error(await parseErrorMessage(res));
@@ -82,10 +82,13 @@ export function me(): Promise<AuthUser> {
 export const updateNickname = async (
   nickname: string,
 ): Promise<{ message: string } & AuthUser> => {
-  const result = await authFetchAPI<{ message: string } & AuthUser>('/auth/me', {
-    method: 'PATCH',
-    body: JSON.stringify({ nickname }),
-  });
+  const result = await authFetchAPI<{ message: string } & AuthUser>(
+    '/auth/me',
+    {
+      method: 'PATCH',
+      body: JSON.stringify({ nickname }),
+    },
+  );
   notifyAuthUserUpdated(result);
   return result;
 };
